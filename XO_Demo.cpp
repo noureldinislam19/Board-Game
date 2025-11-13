@@ -28,8 +28,28 @@ using namespace std;
  *
  * @return int Returns 0 on successful execution.
  */
+void menu()
+{
+    cout << "Choose your option: \n";
+    cout << " 1) SUS\n";
+    cout << " 2) Four-in-a-row\n";
+    cout << " 3) 5 x 5 Tic Tac Toe\n";
+    cout << " 4) Word Tic-tac-toe\n";
+    cout << " 5) Misère Tic Tac Toe\n";
+    cout << " 6) Diamond Tic-Tac-Toe\n";
+    cout << " 7) 4 x 4 Tic-Tac-Toe\n";
+    cout << " 8) Pyramid Tic-Tac-Toe\n";
+    cout << " 9) Numerical Tic-Tac-Toe\n";
+    cout << "10) Obstacles Tic-Tac-Toe\n";
+    cout << "11) Infinity Tic-Tac-Toe\n";
+    cout << "12) Ultimate Tic Tac Toe\n";
+    cout << "13) Memory Tic-Tac-Toe\n";
+}
 int main() {
-
+    int x ;
+    menu () ;
+    cin >> x ;
+    if ( x == 11 ) {
     srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
 
     // Create an instance of the specific UI for X-O using a pointer 
@@ -59,7 +79,8 @@ int main() {
     // Delete the dynamically allocated array of player pointers itself.
     delete[] players;
 
-    return 0; // Exit successfully
+    return 0;
+    }// Exit successfully
 }
 
 // =====================================================================

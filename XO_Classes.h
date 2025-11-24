@@ -1,6 +1,3 @@
-#ifndef XO_CLASSES_H
-#define XO_CLASSES_H
-
 #include "BoardGame_Classes.h"
 #include <queue> // Include queue here
 #include <utility> // For pair
@@ -30,4 +27,25 @@ public:
     virtual Move<char>* get_move(Player<char>* player);
 };
 
-#endif // XO_CLASSES_H
+
+class X_O_Board4 : public Board<char> {
+private:
+    char blank_symbol = '.';
+    // Move the queue inside the class
+
+public:
+    X_O_Board4();
+    bool update_board(Move<char>* move);
+    bool is_win(Player<char>* player);
+    bool is_draw(Player<char>* player);
+    bool is_lose(Player<char>*) { return false; };
+    bool game_is_over(Player<char>* player);
+};
+
+class XO_UI4 : public UI<char> {
+public:
+    XO_UI4();
+    ~XO_UI4() {};
+    Player<char>* create_player(string& name, char symbol, PlayerType type);
+    virtual Move<char>* get_move(Player<char>* player);
+};

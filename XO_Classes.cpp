@@ -4,13 +4,9 @@
 #include <queue>
 #include <utility>
 #include "XO_Classes.h"
+#include <map>
 
 using namespace std;
-
-// REMOVE the global queue from here.
-// queue<pair<int,int>> movelist; <--- DELETED
-
-//--------------------------------------- X_O_Board Implementation
 
 X_O_Board::X_O_Board() : Board(3, 3) {
     for (auto& row : board)
@@ -18,6 +14,7 @@ X_O_Board::X_O_Board() : Board(3, 3) {
             cell = blank_symbol;
 }
 
+//--------------------------------------- Infinty_X_O_Board Implementation
 bool X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -79,8 +76,6 @@ bool X_O_Board::is_win(Player<char>* player) {
 }
 
 bool X_O_Board::is_draw(Player<char>* player) {
-    // Infinity Tic Tac Toe usually doesn't have a draw state
-    // unless you want to implement a turn limit.
     return false;
 }
 
@@ -90,7 +85,7 @@ bool X_O_Board::game_is_over(Player<char>* player) {
 
 //--------------------------------------- XO_UI Implementation
 
-XO_UI::XO_UI() : UI<char>("Welcome to FCAI Infinity X-O Game", 3) {}
+XO_UI::XO_UI() : UI<char>("Welcome to FCAI X-O Game", 3) {}
 
 Player<char>* XO_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
@@ -103,7 +98,7 @@ Move<char>* XO_UI::get_move(Player<char>* player) {
     int x, y;
 
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << "\nPlease enter your move x and y (0 to 2): ";
+        cout << "\nPlease enter your move : ";
         cin >> x >> y;
     }
     else if (player->get_type() == PlayerType::COMPUTER) {
@@ -111,9 +106,78 @@ Move<char>* XO_UI::get_move(Player<char>* player) {
         y = rand() % player->get_board_ptr()->get_columns();
     }
 
-    // REMOVE THIS LINE:
-    // movelist.push({x,y}); 
-    // We do NOT push to the queue here. We wait for the Board to validate it.
-
     return new Move<char>(x, y, player->get_symbol());
 }
+
+//--------------------------------------- Numerical_X_O_Board Implementation
+X_O_Board4::X_O_Board4() : Board(4, 4) {
+    // Initialize all cells with blank_symbol
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
+}
+
+bool X_O_Board4::update_board(Move<char>* move) {
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
+
+    // Validate move and apply if valid
+    if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
+        (board[x][y] == blank_symbol || mark == 0)) {
+
+        if (mark == 0) { // Undo move
+            n_moves--;
+            board[x][y] = blank_symbol;
+        }
+        else {         // Apply move
+            n_moves++;
+            board[x][y] = toupper(mark);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool X_O_Board4::is_win(Player<char>* player) {
+    const char sym = player->get_symbol();
+
+    auto all_equal = [&](char a, char b, char c) {
+        return a == b && b == c && a != blank_symbol;
+        };
+
+    // Check rows and columns
+    for (int i = 0; i < rows; ++i) {
+        if ((all_equal(board[i][0], board[i][1], board[i][2]) && board[i][0] == sym) ||
+            (all_equal(board[0][i], board[1][i], board[2][i]) && board[0][i] == sym) ||
+            (all_equal(board[i][1], board[i][2], board[i][3]) && board[i][1] == sym) ||
+			(all_equal(board[1][i], board[2][i], board[3][i]) && board[1][i] == sym))
+            return true;
+    }
+
+    // Check diagonals
+    if ((all_equal(board[0][0], board[1][1], board[2][2]) && board[1][1] == sym) ||
+        (all_equal(board[0][2], board[1][1], board[2][0]) && board[1][1] == sym) ||
+        (all_equal(board[3][3], board[1][1], board[2][2]) && board[1][1] == sym) ||
+		(all_equal(board[3][1], board[2][2], board[1][3]) && board[2][2] == sym) ||
+		(all_equal(board[0][1], board[1][2], board[2][3]) && board[1][2] == sym) ||
+		(all_equal(board[1][0], board[2][1], board[3][2]) && board[2][1] == sym) ||
+		(all_equal(board[0][3], board[1][2], board[2][1]) && board[1][2] == sym) ||
+        (all_equal(board[3][0], board[2][1], board[1][2]) && board[3][0] == sym)
+        )
+        
+        return true;
+
+    return false;
+}
+
+bool X_O_Board4::is_draw(Player<char>* player) {
+    return (n_moves == 16 && !is_win(player));
+}
+
+bool X_O_Board4::game_is_over(Player<char>* player) {
+	return is_win(player) || is_draw(player);
+}
+
+//--------------------------------------- XO_UI Implementation
+

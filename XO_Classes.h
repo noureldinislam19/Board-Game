@@ -53,7 +53,7 @@ public:
 class X_O_Num_Board : public Board<char> {
 private:
     char blank_symbol = '.';
-    map<char, bool> used_numbers;
+    map<int, bool> used_numbers;
 	
 
 public:

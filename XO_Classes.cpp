@@ -213,15 +213,15 @@ X_O_Num_Board::X_O_Num_Board() : Board(3, 3) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
+    for (char i = '1'; i <= '9'; i++) {
+        used_numbers[i] = false;
+    }
 }
 bool X_O_Num_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
     char mark = move->get_symbol();
-    used_numbers [1, false] ; used_numbers [2, false]; used_numbers [3, false];
-    used_numbers [4, false];  used_numbers [5, false]; used_numbers [6, false];
-    used_numbers [7, false];  used_numbers [8, false]; used_numbers [9, false];
-
+    
     // 1. Validate move logic
     if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
         (board[x][y] == blank_symbol || mark == 0)) {
@@ -234,16 +234,16 @@ bool X_O_Num_Board::update_board(Move<char>* move) {
             if(n_moves % 2 == 0) // X player
             {
                 // Check if the number is odd
-                if((mark - '0') % 2 == 0)
+                if((mark - '0') % 2 == 0 || used_numbers[mark - '0'])
                     return false; // Invalid move
             }
             else // O player
             {
                 // Check if the number is even
-                if((mark - '0') % 2 != 0)
+                if((mark - '0') % 2 != 0 || used_numbers[mark - '0'])
                     return false; // Invalid move
 			}
-            used_numbers[mark] = true;
+            used_numbers[mark - '0'] = true;
 			// 2. Apply the new move
 			board[x][y] = (mark);
             n_moves++;
@@ -259,13 +259,13 @@ bool X_O_Num_Board::is_win(Player<char>* player) {
         };
     // Check rows and columns
     for (int i = 0; i < rows; ++i) {
-        if (int(board[i][0] + board[i][1] + board[i][2]) == 15 ||
-            int(board[0][i] + board[1][i] + board[2][i]) == 15)
+        if ((board[i][0] - '0' + board[i][1] - '0' + board[i][2] - '0') == 15 ||
+            (board[0][i] - '0' + board[1][i] - '0' + board[2][i] - '0') == 15)
             return true;
     }
     // Check diagonals
-    if (int(board[0][0] + board[1][1] + board[2][2]) == 15 ||
-        int(board[0][2] + board[1][1] + board[2][0]) == 15)
+    if ((board[0][0] - '0' + board[1][1] - '0' + board[2][2] - '0') == 15 ||
+        (board[0][2] - '0' + board[1][1] - '0' + board[2][0] - '0') == 15)
         return true;
     return false;
 }

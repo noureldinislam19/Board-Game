@@ -8,13 +8,22 @@
 
 using namespace std;
 
+XO_UI::XO_UI() : UI<char>("Welcome to FCAI Infinty X-O Game", 3) {}
+
+XO_UI4::XO_UI4() :UI<char>("Welcome to FCAI 4x4 X-O Game", 3) {}
+
+XO_Num_UI::XO_Num_UI() :UI<char>("Welcome to FCAI Numerical X-O Game", 3) {}
+
+Pyramid_XO_UI::Pyramid_XO_UI() :UI<char>("Welcome to FCAI Pyramid X-O Game", 3) {}
+
+
+
+//--------------------------------------- Infinty_X_O_Board Implementation
 X_O_Board::X_O_Board() : Board(3, 3) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
 }
-
-//--------------------------------------- Infinty_X_O_Board Implementation
 bool X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -85,11 +94,6 @@ bool X_O_Board::game_is_over(Player<char>* player) {
 
 //--------------------------------------- XO_UI Implementation
 
-XO_UI::XO_UI() : UI<char>("Welcome to FCAI Infinty X-O Game", 3) {}
-
-XO_UI4::XO_UI4() :UI<char>("Welcome to FCAI 4x4 X-O Game", 3){}
-
-XO_Num_UI::XO_Num_UI() :UI<char>("Welcome to FCAI Numerical X-O Game", 3) {}
 
 Player<char>* XO_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
@@ -535,6 +539,88 @@ Move<char>* XO_Inverse_UI::get_move(Player<char>* player) {
         cin >> x >> y;
     }
     else if (player->get_type() == PlayerType::COMPUTER) {
+        x = rand() % player->get_board_ptr()->get_rows();
+        y = rand() % player->get_board_ptr()->get_columns();
+    }
+    return new Move<char>(x, y, player->get_symbol());
+}
+
+//--------------------------------------- Pyramid_X_O_Board Implementation
+
+Pyramid_X_O_Board::Pyramid_X_O_Board() : Board(3, 5) {
+    // Initialize all cells with blank_symbol
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
+ board[0][0] = '*'; board[0][1] = '*'; board[0][3] = '*'; board[0][4] = '*';
+ board[1][0] = '*'; board[1][4] = '*';
+}
+
+bool Pyramid_X_O_Board::update_board(Move<char>* move) {
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
+    // Validate move and apply if valid
+    if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
+        (board[x][y] == blank_symbol || mark == 0)) {
+        if (mark == 0) { // Undo move
+            n_moves--;
+            board[x][y] = blank_symbol;
+        }
+        else {         // Apply move
+            n_moves++;
+            board[x][y] = toupper(mark);
+        }
+        return true;
+    }
+    return false;
+}
+bool Pyramid_X_O_Board::is_win(Player<char>* player) {
+    const char sym = player->get_symbol();
+    auto all_equal = [&](char a, char b, char c) {
+        return a == b && b == c && a != blank_symbol;
+        };
+    // Check pyramid rows
+    if (all_equal(board[0][2], board[1][1], board[2][0]) && board[2][0] == sym)
+        return true;
+    if (all_equal(board[1][1], board[1][2], board[1][3]) && board[1][3] == sym)
+        return true;
+    if (all_equal(board[1][3], board[0][2], board[2][4]) && board[1][3] == sym)
+        return true;
+    if (all_equal(board[0][2], board[1][2], board[2][2]) && board[2][2] == sym)
+		return true;
+    for(int i = 0; i < 3; ++i) {
+        if ((all_equal(board[2][i], board[2][i + 1], board[2][i + 2]) && board[2][i] == sym))
+            return true;
+	}
+    return false;
+}
+bool Pyramid_X_O_Board::is_lose(Player<char>* player) {
+    return false;
+}
+bool Pyramid_X_O_Board::is_draw(Player<char>* player) {
+    return (n_moves == 9 && !is_win(player));
+}
+bool Pyramid_X_O_Board::game_is_over(Player<char>* player) {
+	return is_win(player) || is_draw(player);
+}
+
+Player<char>* Pyramid_XO_UI::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating Pyramid X-O Player: " << name
+        << " (" << symbol << ") - "
+        << (type == PlayerType::HUMAN ? "Human" : "Computer")
+        << endl;
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* Pyramid_XO_UI::get_move(Player<char>* player) {
+    int x, y;
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "\nEnter your move for Pyramid X-O (row col): ";
+        cin >> x >> y;
+    }
+    else {
+        // computer random move
         x = rand() % player->get_board_ptr()->get_rows();
         y = rand() % player->get_board_ptr()->get_columns();
     }

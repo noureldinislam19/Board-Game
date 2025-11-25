@@ -252,5 +252,37 @@ int main() {
 
         return 0;
         }
+    else if (x == 2) {
+        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+
+        // Create an instance of the specific UI for X-O using a pointer 
+        UI<char>* game_ui = new Connect4_UI();
+
+        // Create the game board. For X-O, this is an X_O_Board.
+        Board<char>* connect4_board = new Connect4_Board();
+
+        // Use the UI to set up the players for the game.
+        // The UI returns a dynamically allocated array of Player pointers.
+        Player<char>** players = game_ui->setup_players();
+
+        // Create the game manager with the board and the array of players.
+        GameManager<char> connect4_game(connect4_board, players, game_ui);
+
+        // Run the game loop.
+        connect4_game.run();
+
+        // --- Cleanup ---
+        // Delete the dynamically allocated board object.
+        delete connect4_board;
+
+        // Delete the individual player objects.
+        for (int i = 0; i < 2; ++i) {
+            delete players[i];
+        }
+        // Delete the dynamically allocated array of player pointers itself.
+        delete[] players;
+
+        return 0; // Exit successfully
+        }
 }
 // ========================================

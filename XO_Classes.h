@@ -196,6 +196,25 @@ public:
     virtual Move<char>* get_move(Player<char>* player);
 };
 
+class Pyramid_X_O_Board : public Board<char> {
+private:
+    char blank_symbol = '.';
+public:
+    Pyramid_X_O_Board();
+    bool update_board(Move<char>* move);
+    bool is_win(Player<char>* player);
+    bool is_lose(Player<char>*);
+    bool is_draw(Player<char>* player);
+    bool game_is_over(Player<char>* player);
+};
+class Pyramid_XO_UI : public UI<char> {
+    public:
+    Pyramid_XO_UI();
+    ~Pyramid_XO_UI() {};
+    Player<char>* create_player(string& name, char symbol, PlayerType type);
+    virtual Move<char>* get_move(Player<char>* player);
+};
+
 class XO_UI_WORD : public UI<char> {
 public:
     XO_UI_WORD();
@@ -220,3 +239,4 @@ public:
 
 
 #endif // XO_CLASSES_H
+

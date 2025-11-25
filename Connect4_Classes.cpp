@@ -67,7 +67,7 @@ bool Connect4_Board::is_win(Player<char>* player) {
             if (all_equal(board[i][j + 3], board[i + 1][j+ 2], board[i + 2][j + 1], board[i + 3][j]) && board[i][j + 3] == sym) {
                 return true;
             }
-            if (all_equal(board[i][3-j], board[i][4-j], board[i][5-j], board[i][6-j]) && board[i][3-j] == sym) {
+            if (all_equal(board[i][3-j], board[i+1][4-j], board[i+2][5-j], board[i+3][6-j]) && board[i][3-j] == sym) {
                 return true;
             }
         }

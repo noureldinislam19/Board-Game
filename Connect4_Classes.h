@@ -6,7 +6,7 @@ using namespace std;
 
 class Connect4_Board : public Board<char> {
 private:
-    char blank_symbol = '.'; ///< Character used to represent an empty cell on the board.
+    char blank_symbol = ' '; ///< Character used to represent an empty cell on the board.
 
 public:
     

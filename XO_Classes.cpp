@@ -5,6 +5,7 @@
 #include <utility>
 #include "XO_Classes.h"
 #include <map>
+#include "dic.h"
 
 using namespace std;
 
@@ -15,6 +16,8 @@ XO_UI4::XO_UI4() :UI<char>("Welcome to FCAI 4x4 X-O Game", 3) {}
 XO_Num_UI::XO_Num_UI() :UI<char>("Welcome to FCAI Numerical X-O Game", 3) {}
 
 Pyramid_XO_UI::Pyramid_XO_UI() :UI<char>("Welcome to FCAI Pyramid X-O Game", 3) {}
+
+XO_UI_WORD::XO_UI_WORD() : UI<char>("Welcome to FCAI WORD X-O Game", 3) {}
 
 
 
@@ -191,7 +194,7 @@ Move<char>* XO_UI4::get_move(Player<char>* player) {
     int x, y;
 
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << "\nEnter your move for 4x4 (row col 0–3): ";
+        cout << "\nEnter your move for 4x4 (row col 0â€“3): ";
         cin >> x >> y;
     }
     else {
@@ -625,4 +628,114 @@ Move<char>* Pyramid_XO_UI::get_move(Player<char>* player) {
         y = rand() % player->get_board_ptr()->get_columns();
     }
     return new Move<char>(x, y, player->get_symbol());
+}
+
+X_O_Board_WORD::X_O_Board_WORD() : Board(3, 3) {
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
+}
+
+Player<char>* XO_UI_WORD::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
+        << " player: " << name << " (" << symbol << ")\n";
+
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* XO_UI_WORD::get_move(Player<char>* player) {
+    int x, y;
+    char mark;
+
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "\nPlease enter your move ( row column word ) : ";
+        cin >> x >> y >> mark;
+    }
+    else if (player->get_type() == PlayerType::COMPUTER) {
+        x = rand() % player->get_board_ptr()->get_rows();
+        y = rand() % player->get_board_ptr()->get_columns();
+        mark = 'A' + rand() % 26;
+    }
+
+    return new Move<char>(x, y, mark);
+}
+
+bool X_O_Board_WORD::update_board(Move<char>* move) {
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
+
+    if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
+        (board[x][y] == blank_symbol || mark == 0)) {
+
+        if (mark == 0) { // Undo move (optional, rarely used in this game type)
+            n_moves--;
+            board[x][y] = blank_symbol;
+        }
+        else {
+            // 2. Apply the new move
+            n_moves++;
+            board[x][y] = toupper(mark);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool X_O_Board_WORD::is_win(Player<char>* player) {
+
+    // Check rows and columns
+    for (int i = 0; i < rows; ++i) {
+        string e;
+        string t;
+        e.push_back(board[i][0]);
+        e.push_back(board[i][1]);
+        e.push_back(board[i][2]);
+        t.push_back(board[0][i]);
+        t.push_back(board[1][i]);
+        t.push_back(board[2][i]);
+        if (s.find(e) != s.end() || s.find(t) != s.end()) {
+            return true;
+        }
+
+        reverse(e.begin(), e.end());
+        reverse(t.begin(), t.end());
+
+        if (s.find(e) != s.end() || s.find(t) != s.end()) {
+            return true;
+        }
+        e.clear();
+        t.clear();
+    }
+
+    // Check diagonals
+    string e ;
+    string t ;
+    e.push_back(board[0][0]);
+    e.push_back(board[1][1]);
+    e.push_back(board[2][2]);
+    t.push_back(board[0][2]);
+    t.push_back(board[1][1]);
+    t.push_back(board[2][0]);
+    if (s.find(e) != s.end() || s.find(t) != s.end()){
+        return true;
+    } 
+    reverse(e.begin(), e.end());
+    reverse(t.begin(), t.end());
+
+    if (s.find(e) != s.end() || s.find(t) != s.end()) {
+        return true;
+    }
+    e.clear();
+    t.clear();
+
+    return false;
+}
+
+bool X_O_Board_WORD::is_draw(Player<char>* player) {
+    return (n_moves == 9 && !is_win(player));
+}
+
+bool X_O_Board_WORD::game_is_over(Player<char>* player) {
+    return is_win(player) || is_draw(player);
 }

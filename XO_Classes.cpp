@@ -95,7 +95,6 @@ bool X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
-//--------------------------------------- XO_UI Implementation
 
 
 Player<char>* XO_UI::create_player(string& name, char symbol, PlayerType type) {
@@ -120,35 +119,61 @@ Move<char>* XO_UI::get_move(Player<char>* player) {
     return new Move<char>(x, y, player->get_symbol());
 }
 
-//--------------------------------------- Numerical_X_O_Board Implementation
+//--------------------------------------- 4X4_X_O_Board Implementation
 
 X_O_Board4::X_O_Board4() : Board(4, 4) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
+    for (int i = 0; i < 4; i++) {
+        if (i % 2 == 0) {
+            board[0][i] = 'O';
+            board[3][i] = 'X';
+        }
+        else {
+            board[0][i] = 'X';
+            board[3][i] = 'O';
+        }
+    }
 }
 
 bool X_O_Board4::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
+    char d = move->get_direction();
     char mark = move->get_symbol();
 
-    // Validate move and apply if valid
-    if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
-        (board[x][y] == blank_symbol || mark == 0)) {
+    // --- Must move own piece ---
+    if (x < 0 || x >= 4 || y < 0 || y >= 4)
+        return false;
 
-        if (mark == 0) { // Undo move
-            n_moves--;
-            board[x][y] = blank_symbol;
-        }
-        else {         // Apply move
-            n_moves++;
-            board[x][y] = toupper(mark);
-        }
-        return true;
-    }
-    return false;
+    if (board[x][y] != mark)
+        return false;
+
+    // --- Determine destination ---
+    int nx = x, ny = y;
+
+    if (d == 'L') ny--;
+    else if (d == 'R') ny++;
+    else if (d == 'U') nx--;
+    else if (d == 'D') nx++;
+    else return false;
+
+    // --- Check bounds ---
+    if (nx < 0 || nx >= 4 || ny < 0 || ny >= 4)
+        return false;
+
+    // --- Destination must be empty ---
+    if (board[nx][ny] != blank_symbol)
+        return false;
+
+    // --- Make move ---
+    board[nx][ny] = mark;
+    board[x][y] = blank_symbol;
+
+    return true;
 }
+
 
 bool X_O_Board4::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
@@ -192,22 +217,28 @@ Player<char>* XO_UI4::create_player(string& name, char symbol, PlayerType type) 
 
 Move<char>* XO_UI4::get_move(Player<char>* player) {
     int x, y;
+	char direction;
 
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << "\nEnter your move for 4x4 (row col 0–3): ";
-        cin >> x >> y;
+		cout << "It's your turn " << player->get_name();
+        cout << "\nEnter your cell for 4x4 and where to move (row col 0 to 3) , (L,R,U,D) : ";
+        cin >> x >> y >> direction;
+        
     }
     else {
         // computer random move
         x = rand() % player->get_board_ptr()->get_rows();
-        y = rand() % player->get_board_ptr()->get_columns();
+        y = rand() % player->get_board_ptr()->get_columns();\
+
+                    char dirs[4] = {'L','R','U','D'};
+        direction = dirs[rand() % 4];
     }
 
-    return new Move<char>(x, y, player->get_symbol());
+    return new Move<char>(x, y, player->get_symbol(), direction);
 }
 
 bool X_O_Board4::is_draw(Player<char>* player) {
-    return (n_moves == 16 && !is_win(player));
+    return false;
 }
 
 bool X_O_Board4::game_is_over(Player<char>* player) {
@@ -743,7 +774,8 @@ bool X_O_Board_WORD::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
-//--------------------------------------- X_O_Board Implementation
+
+//--------------------------------------- Connect4 Implementation
 
 Connect4_Board::Connect4_Board() : Board(6, 7) {
     // Initialize all cells with blank_symbol
@@ -819,8 +851,6 @@ bool Connect4_Board::is_draw(Player<char>* player) {
 bool Connect4_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
-
-//--------------------------------------- Connect4 Implementation
 
 Connect4_UI::Connect4_UI() : UI<char>("Weclome to FCAI X-O Game by Dr El-Ramly", 3) {}
 

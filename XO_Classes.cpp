@@ -137,21 +137,26 @@ X_O_Board4::X_O_Board4() : Board(4, 4) {
     }
 }
 
-bool X_O_Board4::update_board(Move<char>* move) {
-    int x = move->get_x();
-    int y = move->get_y();
-    char d = move->get_direction();
-    char mark = move->get_symbol();
+bool X_O_Board4::update_board(Move<char>* move)
+{
+    DirectedMove* dm = static_cast<DirectedMove*>(move);
+    if (!dm) return false;
 
-    // --- Must move own piece ---
+    int x = dm->get_x();
+    int y = dm->get_y();
+    char d = dm->get_direction();      
+    char mark = dm->get_symbol();
+
+    // Validate source
     if (x < 0 || x >= 4 || y < 0 || y >= 4)
         return false;
 
     if (board[x][y] != mark)
         return false;
 
-    // --- Determine destination ---
-    int nx = x, ny = y;
+    // Determine destination
+    int nx = x;
+    int ny = y;
 
     if (d == 'L') ny--;
     else if (d == 'R') ny++;
@@ -159,20 +164,21 @@ bool X_O_Board4::update_board(Move<char>* move) {
     else if (d == 'D') nx++;
     else return false;
 
-    // --- Check bounds ---
+    // Bounds check
     if (nx < 0 || nx >= 4 || ny < 0 || ny >= 4)
         return false;
 
-    // --- Destination must be empty ---
+    // Destination must be empty
     if (board[nx][ny] != blank_symbol)
         return false;
 
-    // --- Make move ---
+    // Apply move
     board[nx][ny] = mark;
     board[x][y] = blank_symbol;
 
     return true;
 }
+
 
 
 bool X_O_Board4::is_win(Player<char>* player) {
@@ -234,7 +240,7 @@ Move<char>* XO_UI4::get_move(Player<char>* player) {
         direction = dirs[rand() % 4];
     }
 
-    return new Move<char>(x, y, player->get_symbol(), direction);
+	return new DirectedMove(x, y, player->get_symbol(), direction);
 }
 
 bool X_O_Board4::is_draw(Player<char>* player) {

@@ -114,13 +114,11 @@ class Move {
     int x;      ///< Row index
     int y;      ///< Column index
     T symbol;   ///< Symbol used in the move
-	T direction; ///< Direction of move (for games that require it)
 
 public:
     /** @brief Construct a move at (x, y) using a symbol. */
     Move(int x, int y, T symbol) : x(x), y(y), symbol(symbol) {}
 
-	Move(int x, int y, T symbol, T direction) : x(x), y(y), symbol(symbol), direction(direction) {}
 
     /** @brief Get row index. */
     int get_x() const { return x; }
@@ -131,7 +129,6 @@ public:
     /** @brief Get the move symbol. */
     T get_symbol() const { return symbol; }
 
-	T get_direction() const { return direction; }
 };
 
 //-----------------------------------------------------

@@ -32,6 +32,18 @@ public:
     virtual Move<char>* get_move(Player<char>* player);
 };
 
+class DirectedMove : public Move<char>
+{
+    char direction;
+
+public:
+    DirectedMove(int x, int y, char symbol, char dir)
+        : Move<char>(x, y, symbol), direction(dir) {}
+
+    char get_direction() const {
+        return direction;
+    }
+};
 
 class X_O_Board4 : public Board<char> {
 private:

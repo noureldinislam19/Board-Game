@@ -19,6 +19,7 @@ Pyramid_XO_UI::Pyramid_XO_UI() :UI<char>("Welcome to FCAI Pyramid X-O Game", 3) 
 
 XO_UI_WORD::XO_UI_WORD() : UI<char>("Welcome to FCAI WORD X-O Game", 3) {}
 
+Memo_XO_UI::Memo_XO_UI() : UI<char>("Weclome to FCAI X-O Game by Dr El-Ramly", 3) {}
 
 
 //--------------------------------------- Infinty_X_O_Board Implementation
@@ -881,3 +882,80 @@ Move<char>* Connect4_UI::get_move(Player<char>* player) {
     }
     return new Move<char>(x, y, player->get_symbol());
 }
+
+//--------------------------------------- Memo_XO_Classes.cpp
+
+Memo_X_O_Board::Memo_X_O_Board() : Board(3, 3) {
+    // Initialize all cells with blank_symbol
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
+    revealed = vector<vector<char>>(3, vector<char>(3, blank_symbol));
+}
+bool Memo_X_O_Board::update_board(Move<char>* move) {
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
+
+    // bounds check
+    if (x < 0 || x >= rows || y < 0 || y >= columns)
+        return false;
+
+    // internal real board must be empty
+    if (revealed[x][y] != blank_symbol)
+        return false;
+
+    // place REAL symbol
+    revealed[x][y] = toupper(mark);
+
+    // board stays hidden
+    board[x][y] = '#';
+
+    n_moves++;
+    return true;
+}
+
+bool Memo_X_O_Board::is_win(Player<char>* player) {
+    const char sym = player->get_symbol();
+    auto all_equal = [&](char a, char b, char c) {
+        return a == b && b == c && a != blank_symbol;
+        };
+    // Check rows and columns
+    for (int i = 0; i < rows; ++i) {
+        if ((all_equal(revealed[i][0], revealed[i][1], revealed[i][2]) && revealed[i][0] == sym) ||
+            (all_equal(revealed[0][i], revealed[1][i], revealed[2][i]) && revealed[0][i] == sym))
+            return true;
+    }
+    // Check diagonals
+    if ((all_equal(revealed[0][0], revealed[1][1], revealed[2][2]) && revealed[1][1] == sym) ||
+        (all_equal(revealed[0][2], revealed[1][1], revealed[2][0]) && revealed[1][1] == sym))
+        return true;
+    return false;
+}
+bool Memo_X_O_Board::is_draw(Player<char>* player) {
+    return (n_moves == 9 && !is_win(player));
+}
+bool Memo_X_O_Board::game_is_over(Player<char>* player) {
+    return is_win(player) || is_draw(player);
+}
+
+Player<char>* Memo_XO_UI::create_player(string& name, char symbol, PlayerType type) {
+    // Create player based on type
+    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
+        << " player: " << name << " (" << symbol << ")\n";
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* Memo_XO_UI::get_move(Player<char>* player) {
+    int x, y;
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "\nPlease enter your move (row column): ";
+        cin >> x >> y;
+    }
+    else if (player->get_type() == PlayerType::COMPUTER) {
+        x = rand() % player->get_board_ptr()->get_rows();
+        y = rand() % player->get_board_ptr()->get_columns();
+    }
+    return new Move<char>(x, y, player->get_symbol());
+}
+

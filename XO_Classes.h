@@ -274,6 +274,28 @@ public:
     virtual Move<char>* get_move(Player<char>* player);
 };
 
+class Memo_X_O_Board : public Board<char> {
+private:
+    char blank_symbol = '.';
+	vector<vector<char>> revealed;
+
+public:
+    Memo_X_O_Board();
+    bool update_board(Move<char>* move);
+    bool is_win(Player<char>* player);
+    bool is_lose(Player<char>*) { return false; };
+    bool is_draw(Player<char>* player);
+    bool game_is_over(Player<char>* player);
+};
+
+class Memo_XO_UI : public UI<char> {
+public:
+    Memo_XO_UI();
+    ~Memo_XO_UI() {};
+    Player<char>* create_player(string& name, char symbol, PlayerType type);
+    virtual Move<char>* get_move(Player<char>* player);
+};
+
 
 #endif // XO_CLASSES_H
 

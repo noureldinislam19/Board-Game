@@ -295,7 +295,30 @@ public:
     Player<char>* create_player(string& name, char symbol, PlayerType type);
     virtual Move<char>* get_move(Player<char>* player);
 };
+//--------------------------------------- Diamond_X_O_Board Implementation
+class Diamond_X_O_Board : public Board<char> {
+private:
+	char blank_symbol = '.';
+public:
+
+    Diamond_X_O_Board();
+    bool valid_cell[5][5];
+    bool update_board(Move<char>* move);
+    bool has_line(Player<char>* player, int len);
+    bool is_win(Player<char>* player);
+    bool is_lose(Player<char>*) { return false; };
+    bool is_draw(Player<char>* player);
+	bool game_is_over(Player<char>* player);
+
+};
+class Diamond_XO_UI : public UI<char> {
+public:
+    Diamond_XO_UI();
+    Player<char>* create_player(string& name, char symbol, PlayerType type);
+	virtual Move<char>* get_move(Player<char>* player);
+};
 
 
 #endif // XO_CLASSES_H
+
 

@@ -298,28 +298,31 @@ public:
 //--------------------------------------- Diamond_X_O_Board Implementation
 class Diamond_X_O_Board : public Board<char> {
 private:
-	char blank_symbol = '.';
+    char blank_symbol = '.';
 public:
-
+    typedef std::vector<std::pair<int, int>> Line;
     Diamond_X_O_Board();
-    bool valid_cell[5][5];
-    bool update_board(Move<char>* move);
-    bool has_line(Player<char>* player, int len);
-    bool is_win(Player<char>* player);
-    bool is_lose(Player<char>*) { return false; };
-    bool is_draw(Player<char>* player);
-	bool game_is_over(Player<char>* player);
+    bool update_board(Move<char>* move) override;
+    bool is_win(Player<char>* player) override;
+    bool is_draw(Player<char>* player) override;
+    bool game_is_over(Player<char>* player) override;
+    bool is_lose(Player<char>* player) override { return false; } 
+    bool valid_cell[7][7];
 
+    bool is_valid_cell(int x, int y) const {
+        return x >= 0 && x < 7 && y >= 0 && y < 7 && valid_cell[x][y];
+    }
+
+    std::vector<Line> collect_lines(Player<char>* player, int len) const;
 };
-class Diamond_XO_UI : public UI<char> {
+class Diamond_X_O_UI : public UI<char> {
 public:
-    Diamond_XO_UI();
+    Diamond_X_O_UI();
     Player<char>* create_player(string& name, char symbol, PlayerType type);
-	virtual Move<char>* get_move(Player<char>* player);
+    virtual Move<char>* get_move(Player<char>* player);
 };
 
 
-#endif // XO_CLASSES_H
 
 //--------------------------------------- obstacles_X_O_Board Implementation
 class obstacles_X_O_Board : public Board<char> {
@@ -341,3 +344,7 @@ class obstacles_XO_UI : public UI<char> {
     Player<char>* create_player(string& name, char symbol, PlayerType type);
     virtual Move<char>* get_move(Player<char>* player);
 };
+
+#endif // XO_CLASSES_H
+
+

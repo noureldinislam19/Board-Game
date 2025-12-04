@@ -229,7 +229,7 @@ int main() {
         }
 		 else if (x == 6) {
         srand(static_cast<unsigned int>(time(0)));
-        UI<char>* game_ui = new Diamond_XO_UI();
+        UI<char>* game_ui = new Diamond_X_O_UI();
         Board<char>* board = new Diamond_X_O_Board();
         Player<char>** players = game_ui->setup_players();
         GameManager<char> game(board, players, game_ui);

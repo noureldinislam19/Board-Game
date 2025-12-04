@@ -961,104 +961,162 @@ Move<char>* Memo_XO_UI::get_move(Player<char>* player) {
 }
 
 //--------------------------------------- Diamond_X_O_Board Implementation
-Diamond_X_O_Board::Diamond_X_O_Board() : Board(5, 5) {
+Diamond_X_O_Board::Diamond_X_O_Board() :Board<char>(7, 7) {
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            bool valid = (abs(i - 3) + abs(j - 3) <= 3);
+            valid_cell[i][j] = valid;
 
-    bool matrix[5][5] = {
-        {0,0,1,0,0},
-        {0,1,1,1,0},
-        {1,1,1,1,1},
-        {0,1,1,1,0},
-        {0,0,1,0,0}
-    };
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            if (matrix[i][j]) {
-                board[i][j] = blank_symbol;
-                valid_cell[i][j] = true;
-            } else {
-                board[i][j] = '*';
-                valid_cell[i][j] = false;
-            }
+            if (valid)
+                board[i][j] = '.';
+            else
+                board[i][j] = '$';   
         }
     }
+
+    n_moves = 0;
 }
+
+
 bool Diamond_X_O_Board::update_board(Move<char>* move) {
-    int x = move->get_x(), y = move->get_y();
+    int x = move->get_x();
+    int y = move->get_y();
     char mark = move->get_symbol();
 
-    // Bounds check for x and y
-    if (x < 0 || x >= rows || y < 0 || y >= columns)
-        return false;
-
-    // Corrected: check only valid indices
+    if (x < 0 || x >= 7 || y < 0 || y >= 7) return false;
     if (!valid_cell[x][y]) return false;
     if (board[x][y] != blank_symbol) return false;
 
     board[x][y] = toupper(mark);
-    n_moves++;
+    ++n_moves;
     return true;
 }
-bool Diamond_X_O_Board::has_line(Player<char>* player, int len) {
+
+
+std::vector<Diamond_X_O_Board::Line>
+Diamond_X_O_Board::collect_lines(Player<char>* player, int len) const {
+
+    std::vector<Line> lines;
     char sym = player->get_symbol();
 
-    auto check = [&](int x, int y, int dx, int dy) {
-        int cnt = 0;
-        for (int k = 0;k < len;k++) {
-            int nx = x + k * dx;
-            int ny = y + k * dy;
-            if (nx < 0 || nx >= 5 || ny < 0 || ny >= 5) return false;
-            if (!valid_cell[nx][ny]) return false;
-            if (board[nx][ny] != sym) return false;
-        }
-        return true;
-        };
-    int dirs[4][2] = { {1,0},{0,1},{1,1},{1,-1} };
+    const int dirs[4][2] = {
+        {0, 1},   
+        {1, 0},   
+        {1, 1},   
+        {1, -1}   
+    };
 
-    for (int i = 0;i < 5;i++)
-        for (int j = 0;j < 5;j++)
-            for (auto& d : dirs)
-                if (check(i, j, d[0], d[1])) return true;
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            if (!valid_cell[i][j]) continue;
+
+            for (int v = 0; v < 4; ++v) {
+                int dx = dirs[v][0];
+                int dy = dirs[v][1];
+
+                Line line;
+                bool ok = true;
+
+                for (int k = 0; k < len; ++k) {
+                    int nx = i + dx * k;
+                    int ny = j + dy * k;
+
+                  
+                    if (nx < 0 || nx >= 7 || ny < 0 || ny >= 7) {
+                        ok = false; break;
+                    }
+
+                    if (!valid_cell[nx][ny]) {
+                        ok = false; break;
+                    }
+
+                    if (board[nx][ny] != sym) {
+                        ok = false; break;
+                    }
+
+                    line.emplace_back(nx, ny);
+                }
+
+                if (ok) {
+                    
+                    std::sort(line.begin(), line.end());
+                    
+                    lines.push_back(line);
+                }
+            }
+        }
+    }
+
+    return lines;
+}
+bool Diamond_X_O_Board::is_win(Player<char>* player) {
+    auto lines3 = collect_lines(player, 3);
+    auto lines4 = collect_lines(player, 4);
+
+    if (lines3.empty() || lines4.empty()) return false;
+
+    auto get_dir = [](const Line& L) -> std::pair<int, int> {
+        if (L.size() < 2) return { 0,0 };
+        return { L[1].first - L[0].first, L[1].second - L[0].second };
+        };
+
+    for (const auto& L3 : lines3) {
+        auto d3 = get_dir(L3);
+
+        for (const auto& L4 : lines4) {
+            auto d4 = get_dir(L4);
+
+         
+            if (d3 == d4) continue;
+
+         
+            if (d3.first == -d4.first && d3.second == -d4.second) continue;
+
+            int inter = 0;
+            for (auto& p3 : L3)
+                for (auto& p4 : L4)
+                    if (p3 == p4) ++inter;
+
+            
+            if (inter == 1)
+                return true;
+        }
+    }
 
     return false;
 }
-
-bool Diamond_X_O_Board::is_win(Player<char>* player) {
-    bool line3 = has_line(player, 3);
-    bool line4 = has_line(player, 4);
-    return (line3 && line4);
-}
-
 bool Diamond_X_O_Board::is_draw(Player<char>* player) {
-    return (n_moves == 13 && !is_win(player)); 
+    return (n_moves >= 25 && !is_win(player));
 }
 
 bool Diamond_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
+Diamond_X_O_UI::Diamond_X_O_UI() : UI<char>("Welcome to Diamond 7x7 Tic-Tac-Toe", 3) {}
 
-
-
-Diamond_XO_UI::Diamond_XO_UI()
-    : UI<char>("Welcome to Diamond Tic Tac Toe!", 3) {}
-
-Player<char>* Diamond_XO_UI::create_player(string& name, char symbol, PlayerType type) {
+Player<char>* Diamond_X_O_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating Diamond Player: " << name << " (" << symbol << ")\n";
     return new Player<char>(name, symbol, type);
 }
 
-Move<char>* Diamond_XO_UI::get_move(Player<char>* player) {
+Move<char>* Diamond_X_O_UI::get_move(Player<char>* player) {
     int x, y;
-
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << "Enter move (row col 0 to 4): ";
+        cout << "Enter move (row col 0–6): ";
         cin >> x >> y;
+        return new Move<char>(x, y, player->get_symbol());
     }
     else {
-        x = rand() % 5;
-        y = rand() % 5;
-    }
+       
+        int rx, ry;
+        Board<char>* b = player->get_board_ptr();
+        do {
+            rx = rand() % 7;
+            ry = rand() % 7;
+        } while (!((Diamond_X_O_Board*)b)->is_valid_cell(rx, ry) || b->get_cell(rx, ry) != '.');
 
-    return new Move<char>(x, y, player->get_symbol());
+        return new Move<char>(rx, ry, player->get_symbol());
+    }
 }
 //--------------------------------------------------- Obstacle_X_O_Board Implementation
 

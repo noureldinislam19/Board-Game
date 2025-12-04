@@ -959,3 +959,105 @@ Move<char>* Memo_XO_UI::get_move(Player<char>* player) {
     return new Move<char>(x, y, player->get_symbol());
 }
 
+//--------------------------------------- Diamond_X_O_Board Implementation
+Diamond_X_O_Board::Diamond_X_O_Board() : Board(5, 5) {
+
+    bool matrix[5][5] = {
+        {0,0,1,0,0},
+        {0,1,1,1,0},
+        {1,1,1,1,1},
+        {0,1,1,1,0},
+        {0,0,1,0,0}
+    };
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            if (matrix[i][j]) {
+                board[i][j] = blank_symbol;
+                valid_cell[i][j] = true;
+            } else {
+                board[i][j] = '$';
+                valid_cell[i][j] = false;
+            }
+        }
+    }
+}
+bool Diamond_X_O_Board::update_board(Move<char>* move) {
+    int x = move->get_x(), y = move->get_y();
+    char mark = move->get_symbol();
+
+    // Bounds check for x and y
+    if (x < 0 || x >= rows || y < 0 || y >= columns)
+        return false;
+
+    // Corrected: check only valid indices
+    if (!valid_cell[x][y]) return false;
+    if (board[x][y] != blank_symbol) return false;
+
+    board[x][y] = toupper(mark);
+    n_moves++;
+    return true;
+}
+bool Diamond_X_O_Board::has_line(Player<char>* player, int len) {
+    char sym = player->get_symbol();
+
+    auto check = [&](int x, int y, int dx, int dy) {
+        int cnt = 0;
+        for (int k = 0;k < len;k++) {
+            int nx = x + k * dx;
+            int ny = y + k * dy;
+            if (nx < 0 || nx >= 5 || ny < 0 || ny >= 5) return false;
+            if (!valid_cell[nx][ny]) return false;
+            if (board[nx][ny] != sym) return false;
+        }
+        return true;
+        };
+    int dirs[4][2] = { {1,0},{0,1},{1,1},{1,-1} };
+
+    for (int i = 0;i < 5;i++)
+        for (int j = 0;j < 5;j++)
+            for (auto& d : dirs)
+                if (check(i, j, d[0], d[1])) return true;
+
+    return false;
+}
+
+bool Diamond_X_O_Board::is_win(Player<char>* player) {
+    bool line3 = has_line(player, 3);
+    bool line4 = has_line(player, 4);
+    return (line3 && line4);
+}
+
+bool Diamond_X_O_Board::is_draw(Player<char>* player) {
+    return (n_moves == 13 && !is_win(player)); 
+}
+
+bool Diamond_X_O_Board::game_is_over(Player<char>* player) {
+    return is_win(player) || is_draw(player);
+}
+
+
+
+Diamond_XO_UI::Diamond_XO_UI()
+    : UI<char>("Welcome to Diamond Tic Tac Toe!", 3) {}
+
+Player<char>* Diamond_XO_UI::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating Diamond Player: " << name << " (" << symbol << ")\n";
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* Diamond_XO_UI::get_move(Player<char>* player) {
+    int x, y;
+
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "Enter move (row col 0–4): ";
+        cin >> x >> y;
+    }
+    else {
+        x = rand() % 5;
+        y = rand() % 5;
+    }
+
+    return new Move<char>(x, y, player->get_symbol());
+}
+
+

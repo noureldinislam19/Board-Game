@@ -5,6 +5,7 @@
 #include <utility>
 #include "XO_Classes.h"
 #include <map>
+#include <algorithm>
 #include "dic.h"
 
 using namespace std;

@@ -321,4 +321,23 @@ public:
 
 #endif // XO_CLASSES_H
 
-
+//--------------------------------------- obstacles_X_O_Board Implementation
+class obstacles_X_O_Board : public Board<char> {
+    private:
+    char blank_symbol = '.';
+	char obstacle_symbol = '*';
+    public:
+    obstacles_X_O_Board();
+    bool update_board(Move<char>* move);
+    bool is_win(Player<char>* player);
+    bool is_lose(Player<char>*) { return false; };
+    bool is_draw(Player<char>* player);
+	bool game_is_over(Player<char>* player);
+};
+class obstacles_XO_UI : public UI<char> {
+    public:
+    obstacles_XO_UI();
+    ~obstacles_XO_UI() {};
+    Player<char>* create_player(string& name, char symbol, PlayerType type);
+    virtual Move<char>* get_move(Player<char>* player);
+};

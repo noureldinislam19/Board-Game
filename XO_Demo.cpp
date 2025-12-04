@@ -36,7 +36,7 @@ void menu()
     cout << " 2) Four-in-a-row\n";
     cout << " 3) 5 x 5 Tic Tac Toe\n";
     cout << " 4) Word Tic-tac-toe\n";
-    cout << " 5) Misère Tic Tac Toe\n";
+    cout << " 5) Misere Tic Tac Toe\n";
     cout << " 6) Diamond Tic-Tac-Toe\n";
     cout << " 7) 4 x 4 Tic-Tac-Toe\n";
     cout << " 8) Pyramid Tic-Tac-Toe\n";
@@ -321,6 +321,28 @@ int main() {
             delete players[i];
         }
 			return 0;
+        }
+    else if (x == 10) {
+		srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+		// Create an instance of the specific UI for X-O using a pointer
+		UI<char>* game_ui = new obstacles_XO_UI();
+		// Create the game board. For X-O, this is an X_O_Board
+		Board<char>* xo_board = new obstacles_X_O_Board();
+		// Use the UI to set up the players for the game.
+		// The UI returns a dynamically allocated array of Player pointers.
+		Player<char>** players = game_ui->setup_players();
+		// Create the game manager with the board and the array of players.
+		GameManager<char> x_o_game(xo_board, players, game_ui);
+		// Run the game loop.
+		x_o_game.run();
+		// --- Cleanup ---
+		// Delete the dynamically allocated board object.
+		delete xo_board;
+		// Delete the individual player objects.
+        for (int i = 0; i < 2; ++i) {
+            delete players[i];
+        }
+		return 0;
         }
 }
 

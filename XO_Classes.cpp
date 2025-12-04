@@ -21,6 +21,7 @@ XO_UI_WORD::XO_UI_WORD() : UI<char>("Welcome to FCAI WORD X-O Game", 3) {}
 
 Memo_XO_UI::Memo_XO_UI() : UI<char>("Weclome to FCAI X-O Game by Dr El-Ramly", 3) {}
 
+obstacles_XO_UI::obstacles_XO_UI() : UI<char>("Welcome to Obstacle Tic Tac Toe!", 3) {}
 
 //--------------------------------------- Infinty_X_O_Board Implementation
 X_O_Board::X_O_Board() : Board(3, 3) {
@@ -975,7 +976,7 @@ Diamond_X_O_Board::Diamond_X_O_Board() : Board(5, 5) {
                 board[i][j] = blank_symbol;
                 valid_cell[i][j] = true;
             } else {
-                board[i][j] = '$';
+                board[i][j] = '*';
                 valid_cell[i][j] = false;
             }
         }
@@ -1049,7 +1050,7 @@ Move<char>* Diamond_XO_UI::get_move(Player<char>* player) {
     int x, y;
 
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << "Enter move (row col 0–4): ";
+        cout << "Enter move (row col 0 to 4): ";
         cin >> x >> y;
     }
     else {
@@ -1059,5 +1060,94 @@ Move<char>* Diamond_XO_UI::get_move(Player<char>* player) {
 
     return new Move<char>(x, y, player->get_symbol());
 }
+//--------------------------------------------------- Obstacle_X_O_Board Implementation
 
+Player<char>* obstacles_XO_UI::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating Obstacle Player: " << name << " (" << symbol << ")\n";
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* obstacles_XO_UI::get_move(Player<char>* player) {
+    int x, y;
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "Enter move (row col 0 to 5): ";
+        cin >> x >> y;
+    }
+    else {
+        x = rand() % 6;
+        y = rand() % 6;
+    }
+    return new Move<char>(x, y, player->get_symbol());
+}
+
+obstacles_X_O_Board::obstacles_X_O_Board() : Board(6, 6) {
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
+    }
+
+bool obstacles_X_O_Board::update_board(Move<char>* move) {
+	int x = move->get_x();
+	int y = move->get_y();
+	char mark = move->get_symbol();
+	// Validate move and apply if valid
+    if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
+        (board[x][y] == blank_symbol || mark == 0)) {
+        if (mark == 0) { // Undo move
+            n_moves--;
+            board[x][y] = blank_symbol;
+        }
+        else {         // Apply move
+            n_moves++;
+            board[x][y] = toupper(mark);
+            if (n_moves % 2 == 0) {
+                board[rand() % 6][rand() % 6] = '#';
+                board[rand() % 6][rand() % 6] = '#';
+            }
+        }
+    }
+        return true;
+    }
+
+bool obstacles_X_O_Board::is_win(Player<char>* player) {
+    const char sym = player->get_symbol();
+    auto all_equal = [&](char a, char b, char c) {
+        return a == b && b == c && a != blank_symbol;
+        };
+
+    // Check rows and columns
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < columns - 2; ++j) {
+            if (all_equal(board[i][j], board[i][j + 1], board[i][j + 2]) && board[i][j] == sym)
+                return true;
+        }
+    }
+    for (int j = 0; j < columns; ++j) {
+        for (int i = 0; i < rows - 2; ++i) {
+            if (all_equal(board[i][j], board[i + 1][j], board[i + 2][j]) && board[i][j] == sym)
+                return true;
+        }
+    }
+	// Check diagonals
+    for (int i = 0; i < rows - 2; ++i) {
+        for (int j = 0; j < columns - 2; ++j) {
+            if (all_equal(board[i][j], board[i + 1][j + 1], board[i + 2][j + 2]) && board[i][j] == sym)
+                return true;
+        }
+    }
+    for (int i = 0; i < rows - 2; ++i) {
+        for (int j = 2; j < columns; ++j) {
+            if (all_equal(board[i][j], board[i + 1][j - 1], board[i + 2][j - 2]) && board[i][j] == sym)
+                return true;
+        }
+    }
+    
+    return false;
+}
+bool obstacles_X_O_Board::is_draw(Player<char>* player) {
+    return (n_moves == 36 && !is_win(player));
+}
+bool obstacles_X_O_Board::game_is_over(Player<char>* player) {
+    return is_win(player) || is_draw(player);
+}
 

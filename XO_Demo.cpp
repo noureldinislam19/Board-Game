@@ -227,6 +227,22 @@ int main() {
 
         return 0;
         }
+		 else if (x == 6) {
+        srand(static_cast<unsigned int>(time(0)));
+        UI<char>* game_ui = new Diamond_XO_UI();
+        Board<char>* board = new Diamond_X_O_Board();
+        Player<char>** players = game_ui->setup_players();
+        GameManager<char> game(board, players, game_ui);
+
+        game.run();
+
+        delete board;
+        delete players[0];
+        delete players[1];
+        delete[] players;
+        return 0;
+
+    }
     else if (x == 8) {
         srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
         // Create an instance of the specific UI for X-O using a pointer

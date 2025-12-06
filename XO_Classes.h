@@ -70,7 +70,7 @@ class X_O_Num_Board : public Board<char> {
 private:
     char blank_symbol = '0';
     map<int, bool> used_numbers;
-	
+
 
 public:
     X_O_Num_Board();
@@ -82,7 +82,7 @@ public:
 };
 
 class XO_Num_UI : public UI<char> {
-    public:
+public:
     XO_Num_UI();
     ~XO_Num_UI() {};
     Player<char>* create_player(string& name, char symbol, PlayerType type);
@@ -220,7 +220,7 @@ public:
     bool game_is_over(Player<char>* player);
 };
 class Pyramid_XO_UI : public UI<char> {
-    public:
+public:
     Pyramid_XO_UI();
     ~Pyramid_XO_UI() {};
     Player<char>* create_player(string& name, char symbol, PlayerType type);
@@ -277,7 +277,7 @@ public:
 class Memo_X_O_Board : public Board<char> {
 private:
     char blank_symbol = '.';
-	vector<vector<char>> revealed;
+    vector<vector<char>> revealed;
 
 public:
     Memo_X_O_Board();
@@ -306,7 +306,7 @@ public:
     bool is_win(Player<char>* player) override;
     bool is_draw(Player<char>* player) override;
     bool game_is_over(Player<char>* player) override;
-    bool is_lose(Player<char>* player) override { return false; } 
+    bool is_lose(Player<char>* player) override { return false; }
     bool valid_cell[7][7];
 
     bool is_valid_cell(int x, int y) const {
@@ -326,19 +326,19 @@ public:
 
 //--------------------------------------- obstacles_X_O_Board Implementation
 class obstacles_X_O_Board : public Board<char> {
-    private:
+private:
     char blank_symbol = '.';
-	char obstacle_symbol = '*';
-    public:
+    char obstacle_symbol = '*';
+public:
     obstacles_X_O_Board();
     bool update_board(Move<char>* move);
     bool is_win(Player<char>* player);
     bool is_lose(Player<char>*) { return false; };
     bool is_draw(Player<char>* player);
-	bool game_is_over(Player<char>* player);
+    bool game_is_over(Player<char>* player);
 };
 class obstacles_XO_UI : public UI<char> {
-    public:
+public:
     obstacles_XO_UI();
     ~obstacles_XO_UI() {};
     Player<char>* create_player(string& name, char symbol, PlayerType type);
@@ -349,12 +349,12 @@ class X_O_Board_5 : public Board<char> {
 public:
     X_O_Board_5();
     bool update_board(Move<char>* move);
-    bool is_win(Player<char>* player) ;
+    bool is_win(Player<char>* player);
     bool is_draw(Player<char>* player);
     bool is_lose(Player<char>* player);
-    bool game_is_over(Player<char>* player) ;
+    bool game_is_over(Player<char>* player);
 private:
-    int count_three_in_row(char sym) ;
+    int count_three_in_row(char sym);
     char blank_symbol = '.';
 };
 
@@ -370,20 +370,23 @@ public:
 //--------------------------------------------------- Ultimate Tic-Tac-Toe Implementation
 
 class Ultimate_X_O_Board : public Board<char> {
-    private:
+private:
     char blank_symbol = '.';
     char main_board[3][3];
-    public:
+    int y = 0;
+public:
     Ultimate_X_O_Board();
+    void print_meta_board();
+    void update_meta_board();
     bool update_board(Move<char>* move) override;
     bool is_win(Player<char>* player) override;
     bool is_draw(Player<char>* player) override;
     bool game_is_over(Player<char>* player) override;
-	bool is_lose(Player<char>*) override { return false; }  
+    bool is_lose(Player<char>*) override { return false; }
 };
 
 class Ultimate_X_O_UI : public UI<char> {
-    public:
+public:
     Ultimate_X_O_UI();
     Player<char>* create_player(string& name, char symbol, PlayerType type) override;
     virtual Move<char>* get_move(Player<char>* player) override;

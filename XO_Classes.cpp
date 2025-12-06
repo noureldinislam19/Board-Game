@@ -20,7 +20,9 @@ Pyramid_XO_UI::Pyramid_XO_UI() :UI<char>("Welcome to FCAI Pyramid X-O Game", 3) 
 
 XO_UI_WORD::XO_UI_WORD() : UI<char>("Welcome to FCAI WORD X-O Game", 3) {}
 
-Memo_XO_UI::Memo_XO_UI() : UI<char>("Weclome to FCAI X-O Game by Dr El-Ramly", 3) {}
+XO_UI_5::XO_UI_5() : UI<char>("Welcome to FCAI 5x5 X-O Game", 3) {}
+
+Memo_XO_UI::Memo_XO_UI() : UI<char>("Welcome to FCAI X-O Game by Dr El-Ramly", 3) {}
 
 obstacles_XO_UI::obstacles_XO_UI() : UI<char>("Welcome to Obstacle Tic Tac Toe!", 3) {}
 
@@ -1209,4 +1211,134 @@ bool obstacles_X_O_Board::is_draw(Player<char>* player) {
 bool obstacles_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
+
+// ------------------------------ 5x5 X-O board 
+
+
+Player<char>* XO_UI_5::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
+        << " player: " << name << " (" << symbol << ")\n";
+
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* XO_UI_5::get_move(Player<char>* player) {
+    int x, y;
+
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "\nPlease enter your move : ";
+        cin >> x >> y;
+    }
+    else if (player->get_type() == PlayerType::COMPUTER) {
+        x = rand() % player->get_board_ptr()->get_rows();
+        y = rand() % player->get_board_ptr()->get_columns();
+    }
+
+    return new Move<char>(x, y, player->get_symbol());
+}
+
+X_O_Board_5::X_O_Board_5() : Board(5, 5) {
+    for (int i = 0;i < rows;++i)
+        for (int j = 0;j < columns;++j)
+            board[i][j] = blank_symbol;
+    n_moves = 0;
+}
+
+bool X_O_Board_5::update_board(Move<char>* move) {
+    int x = move->get_x(), y = move->get_y();
+    char mark = toupper(move->get_symbol());
+    if (x < 0 || x >= rows || y < 0 || y >= columns || n_moves == 24) return false;
+    if (board[x][y] != blank_symbol) return false;
+    board[x][y] = mark;
+    ++n_moves;
+    return true;
+}
+
+int X_O_Board_5::count_three_in_row(char sym) {
+    int count = 0;
+    int rows = 5, cols = 5;
+
+    auto check_three = [&](char a, char b, char c) {
+        return a == sym && b == sym && c == sym;
+        };
+
+    
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c <= cols - 3; c++) {
+            if (check_three(board[r][c], board[r][c + 1], board[r][c + 2])) {
+                count++;
+            }
+        }
+    }
+
+    
+    for (int c = 0; c < cols; c++) {
+        for (int r = 0; r <= rows - 3; r++) {
+            if (check_three(board[r][c], board[r + 1][c], board[r + 2][c])) {
+                count++;
+            }
+        }
+    }
+
+    
+    for (int r = 0; r <= rows - 3; r++) {
+        for (int c = 0; c <= cols - 3; c++) {
+            if (check_three(board[r][c], board[r + 1][c + 1], board[r + 2][c + 2])) {
+                count++;
+            }
+        }
+    }
+
+    for (int r = 0; r <= rows - 3; r++) {
+        for (int c = 2; c < cols; c++) {  
+            if (check_three(board[r][c], board[r + 1][c - 1], board[r + 2][c - 2])) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+bool X_O_Board_5::is_win(Player<char>* player) {
+    if (n_moves < 24) return false;
+
+    int xCount = count_three_in_row('X');
+    int oCount = count_three_in_row('O');
+
+    cout << xCount << " " << oCount;
+
+    if (xCount > oCount)   return player->get_symbol() == 'X';
+    if (oCount > xCount)   return player->get_symbol() == 'O';
+
+    return false; 
+}
+
+bool X_O_Board_5::is_lose(Player<char>* player) {
+    if (n_moves < 24) return false;
+
+    int xCount = count_three_in_row('X');
+    int oCount = count_three_in_row('O');
+
+    cout << xCount << " " << oCount;
+
+    if (xCount > oCount)   return player->get_symbol() == 'O';
+    if (oCount > xCount)   return player->get_symbol() == 'X';
+
+    return false;
+}
+
+bool X_O_Board_5::is_draw(Player<char>* player) {
+    if (n_moves < 24) return false;
+        char me = toupper(player->get_symbol());
+        char opp = (me == 'X') ? 'O' : 'X';
+        cout << count_three_in_row(opp) << " " << count_three_in_row(me) << endl;
+        return count_three_in_row(me) == count_three_in_row(opp);
+    
+}
+
+bool X_O_Board_5::game_is_over(Player<char>* player) {
+    return n_moves >= 24;
+}
+
 

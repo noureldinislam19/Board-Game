@@ -1,3 +1,23 @@
+/**
+ * @file XO_Classes.cpp
+ * @brief Implementations of multiple Tic-Tac-Toe (X-O) variants and their UIs.
+ *
+ * This file contains the concrete board and UI implementations for:
+ * - Infinity 3x3 X-O
+ * - 4x4 sliding X-O
+ * - Numerical X-O (1–9 forming 15)
+ * - SUS game (forming the word "SUS")
+ * - Inverse X-O (losing condition)
+ * - Pyramid X-O
+ * - Word-based X-O with dictionary
+ * - Connect 4
+ * - Memory X-O (hidden board)
+ * - Diamond 7x7 Tic-Tac-Toe
+ * - Obstacle Tic-Tac-Toe
+ * - 5x5 X-O (score by number of 3-in-a-row lines)
+ * - Ultimate Tic-Tac-Toe (9x9 meta-board)
+ */
+
 #include <iostream>
 #include <iomanip>
 #include <cctype> 
@@ -10,30 +30,75 @@
 
 using namespace std;
 
+/**
+ * @brief Default constructor for the classic 3x3 X-O UI.
+ *
+ * Initializes the base UI with a welcome message and 3 rounds.
+ */
 XO_UI::XO_UI() : UI<char>("Welcome to FCAI Infinty X-O Game", 3) {}
 
+/**
+ * @brief Default constructor for the 4x4 X-O UI.
+ */
 XO_UI4::XO_UI4() :UI<char>("Welcome to FCAI 4x4 X-O Game", 3) {}
 
+/**
+ * @brief Default constructor for the Numerical X-O UI.
+ */
 XO_Num_UI::XO_Num_UI() :UI<char>("Welcome to FCAI Numerical X-O Game", 3) {}
 
+/**
+ * @brief Default constructor for the Pyramid X-O UI.
+ */
 Pyramid_XO_UI::Pyramid_XO_UI() :UI<char>("Welcome to FCAI Pyramid X-O Game", 3) {}
 
+/**
+ * @brief Default constructor for the WORD X-O UI.
+ */
 XO_UI_WORD::XO_UI_WORD() : UI<char>("Welcome to FCAI WORD X-O Game", 3) {}
 
+/**
+ * @brief Default constructor for the 5x5 X-O UI.
+ */
 XO_UI_5::XO_UI_5() : UI<char>("Welcome to FCAI 5x5 X-O Game", 3) {}
 
+/**
+ * @brief Default constructor for the Memory X-O UI.
+ */
 Memo_XO_UI::Memo_XO_UI() : UI<char>("Welcome to FCAI X-O Game by Dr El-Ramly", 3) {}
 
+/**
+ * @brief Default constructor for Obstacle Tic Tac Toe UI.
+ */
 obstacles_XO_UI::obstacles_XO_UI() : UI<char>("Welcome to Obstacle Tic Tac Toe!", 3) {}
 
+/**
+ * @brief Default constructor for Ultimate Tic Tac Toe UI.
+ */
 Ultimate_X_O_UI::Ultimate_X_O_UI() : UI<char>("Welcome to Ultimate Tic Tac Toe!", 3) {}
 
 //--------------------------------------- Infinty_X_O_Board Implementation
+
+/**
+ * @brief Constructs a 3x3 infinity X-O board and clears all cells.
+ *
+ * The board starts empty and uses @c blank_symbol for all positions.
+ */
 X_O_Board::X_O_Board() : Board(3, 3) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
 }
+
+/**
+ * @brief Updates the Infinity X-O board with a new move.
+ *
+ * For this variant, only the last 6 moves remain on the board. When the
+ * number of moves exceeds 6, the oldest move is removed.
+ *
+ * @param move Pointer to the move containing coordinates and symbol.
+ * @return @c true if the move is valid and applied, otherwise @c false.
+ */
 bool X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -72,6 +137,12 @@ bool X_O_Board::update_board(Move<char>* move) {
     return false;
 }
 
+/**
+ * @brief Checks if the given player has a winning 3-in-a-row on the Infinity board.
+ *
+ * @param player Pointer to the player to check for a win.
+ * @return @c true if the player has won, otherwise @c false.
+ */
 bool X_O_Board::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
 
@@ -94,16 +165,38 @@ bool X_O_Board::is_win(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the Infinity X-O game is a draw.
+ *
+ * In this implementation, an Infinity game is never considered a draw.
+ *
+ * @param player Unused player pointer.
+ * @return Always @c false.
+ */
 bool X_O_Board::is_draw(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the Infinity X-O game is over.
+ *
+ * The game ends when the given player wins. Draw is always @c false here.
+ *
+ * @param player Pointer to the player to check.
+ * @return @c true if the game is over, otherwise @c false.
+ */
 bool X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
-
-
+/**
+ * @brief Creates a player for the classic 3x3 Infinity X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol (e.g. 'X' or 'O').
+ * @param type Player type (Human or Computer).
+ * @return Pointer to the newly created player.
+ */
 Player<char>* XO_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
         << " player: " << name << " (" << symbol << ")\n";
@@ -111,6 +204,14 @@ Player<char>* XO_UI::create_player(string& name, char symbol, PlayerType type) {
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the current player for the 3x3 Infinity X-O game.
+ *
+ * Human players enter coordinates manually, computer players choose random cells.
+ *
+ * @param player Pointer to the current player.
+ * @return Pointer to the newly allocated move.
+ */
 Move<char>* XO_UI::get_move(Player<char>* player) {
     int x, y;
 
@@ -128,6 +229,11 @@ Move<char>* XO_UI::get_move(Player<char>* player) {
 
 //--------------------------------------- 4X4_X_O_Board Implementation
 
+/**
+ * @brief Constructs a 4x4 X-O board and initializes starting positions.
+ *
+ * The first and last rows are pre-filled with alternating 'X' and 'O' pieces.
+ */
 X_O_Board4::X_O_Board4() : Board(4, 4) {
     for (auto& row : board)
         for (auto& cell : row)
@@ -144,6 +250,16 @@ X_O_Board4::X_O_Board4() : Board(4, 4) {
     }
 }
 
+/**
+ * @brief Updates the 4x4 sliding X-O board with a directional move.
+ *
+ * The move is expected to be a @c DirectedMove with a direction:
+ * - 'L' (left), 'R' (right), 'U' (up), or 'D' (down).
+ * The source cell must contain the player's mark, and the destination must be empty.
+ *
+ * @param move Pointer to a @c DirectedMove describing the move.
+ * @return @c true if the move is valid and applied, otherwise @c false.
+ */
 bool X_O_Board4::update_board(Move<char>* move)
 {
     DirectedMove* dm = static_cast<DirectedMove*>(move);
@@ -186,8 +302,14 @@ bool X_O_Board4::update_board(Move<char>* move)
     return true;
 }
 
-
-
+/**
+ * @brief Checks if the given player has a winning 3-in-a-row on the 4x4 board.
+ *
+ * All horizontal, vertical and diagonal triplets are considered.
+ *
+ * @param player Pointer to the player to check.
+ * @return @c true if the player has a winning line, otherwise @c false.
+ */
 bool X_O_Board4::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
 
@@ -219,6 +341,15 @@ bool X_O_Board4::is_win(Player<char>* player) {
 
     return false;
 }
+
+/**
+ * @brief Creates a player for the 4x4 X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to the newly created player.
+ */
 Player<char>* XO_UI4::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating 4x4 X-O Player: " << name
         << " (" << symbol << ") - "
@@ -228,6 +359,18 @@ Player<char>* XO_UI4::create_player(string& name, char symbol, PlayerType type) 
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from a player in the 4x4 sliding X-O UI.
+ *
+ * For human players, the input format is:
+ * @code
+ * row col direction
+ * @endcode
+ * where direction is one of L, R, U, D.
+ *
+ * @param player Pointer to the current player.
+ * @return Pointer to a newly allocated @c DirectedMove.
+ */
 Move<char>* XO_UI4::get_move(Player<char>* player) {
     int x, y;
     char direction;
@@ -241,25 +384,43 @@ Move<char>* XO_UI4::get_move(Player<char>* player) {
     else {
         // computer random move
         x = rand() % player->get_board_ptr()->get_rows();
-        y = rand() % player->get_board_ptr()->get_columns();\
-
-            char dirs[4] = { 'L','R','U','D' };
+        y = rand() % player->get_board_ptr()->get_columns();
+        char dirs[4] = { 'L','R','U','D' };
         direction = dirs[rand() % 4];
     }
 
     return new DirectedMove(x, y, player->get_symbol(), direction);
 }
 
+/**
+ * @brief Checks if the 4x4 sliding X-O game is a draw.
+ *
+ * This implementation always returns @c false.
+ *
+ * @param player Unused player pointer.
+ * @return Always @c false.
+ */
 bool X_O_Board4::is_draw(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks whether the 4x4 X-O game is over.
+ *
+ * @param player Pointer to the player to check.
+ * @return @c true if the player has won or the game is a draw, otherwise @c false.
+ */
 bool X_O_Board4::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
 //--------------------------------------- Num_X_O_Board Implementation
 
+/**
+ * @brief Constructs a 3x3 Numerical X-O board.
+ *
+ * Initializes all cells to blank and marks all digits 1–9 as unused.
+ */
 X_O_Num_Board::X_O_Num_Board() : Board(3, 3) {
     for (auto& row : board)
         for (auto& cell : row)
@@ -268,6 +429,17 @@ X_O_Num_Board::X_O_Num_Board() : Board(3, 3) {
         used_numbers[i] = false;
     }
 }
+
+/**
+ * @brief Updates the Numerical X-O board with a new move.
+ *
+ * - X player plays on even turns (n_moves % 2 == 0) and must place odd numbers.
+ * - O player plays on odd turns and must place even numbers.
+ * - Each number from '1' to '9' can be used at most once.
+ *
+ * @param move Pointer to the move including coordinates and digit.
+ * @return @c true if the move is valid and applied, @c false otherwise.
+ */
 bool X_O_Num_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -304,6 +476,14 @@ bool X_O_Num_Board::update_board(Move<char>* move) {
     return false;
 }
 
+/**
+ * @brief Checks if the Numerical X-O board has a winning line summing to 15.
+ *
+ * A win occurs if any row, column, or diagonal forms a sum of 15 using 3 digits.
+ *
+ * @param player Pointer to the player (unused for checking).
+ * @return @c true if any line sums to 15, otherwise @c false.
+ */
 bool X_O_Num_Board::is_win(Player<char>* player) {
     auto notzero = [&](char a, char b, char c) {
         return a != blank_symbol && b != blank_symbol && c != blank_symbol;
@@ -327,6 +507,15 @@ bool X_O_Num_Board::is_win(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Gets a move for the Numerical X-O UI.
+ *
+ * Human players input (row, column, number). Computer players choose a random
+ * cell and a random digit from '1' to '9'.
+ *
+ * @param player Pointer to the current player.
+ * @return Pointer to the newly allocated move.
+ */
 Move<char>* XO_Num_UI::get_move(Player<char>* player) {
     int x, y;
     char mark;
@@ -342,12 +531,38 @@ Move<char>* XO_Num_UI::get_move(Player<char>* player) {
     }
     return new Move<char>(x, y, mark);
 }
+
+/**
+ * @brief Checks if the Numerical X-O game is a draw.
+ *
+ * A draw occurs when all 9 moves are played and there is no winning line
+ * summing to 15.
+ *
+ * @param player Pointer to player for checking win.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool X_O_Num_Board::is_draw(Player<char>* player) {
     return (n_moves == 9 && !is_win(player));
 }
+
+/**
+ * @brief Checks if the Numerical X-O game is over.
+ *
+ * @param player Pointer to the player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool X_O_Num_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
+
+/**
+ * @brief Creates a player for Numerical X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to the created player.
+ */
 Player<char>* XO_Num_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating Numerical XO Player: " << name
         << " (" << symbol << ") - "
@@ -359,6 +574,17 @@ Player<char>* XO_Num_UI::create_player(string& name, char symbol, PlayerType typ
 
 //--------------------------------------- SUS_X_O_Board Implementation
 
+/**
+ * @brief Maps three board positions to an index representing a specific line.
+ *
+ * The function identifies which of the 8 possible 3-in-a-row lines
+ * (3 rows, 3 columns, 2 diagonals) the triplet belongs to.
+ *
+ * @param a First cell coordinate.
+ * @param b Second cell coordinate.
+ * @param c Third cell coordinate.
+ * @return An integer ID (1–8) corresponding to the line.
+ */
 int SUS_Board::check(pair<int, int> a, pair<int, int> b, pair<int, int> c) {
     if (a.first == 0 && a.second == 0 && b.first == 0 && b.second == 1 && c.first == 0 && c.second == 2) {
         return 1;
@@ -384,18 +610,34 @@ int SUS_Board::check(pair<int, int> a, pair<int, int> b, pair<int, int> c) {
     if (a.first == 0 && a.second == 2 && b.first == 1 && b.second == 1 && c.first == 2 && c.second == 0) {
         return 8;
     }
-
-
+    return 0;
 }
+
+/**
+ * @brief Global array marking whether a particular SUS line has been counted.
+ *
+ * Each index 1–8 corresponds to a specific row, column, or diagonal.
+ */
 bool taken[9]{};
 
-
+/**
+ * @brief Constructs a 3x3 SUS board initialized with blanks.
+ */
 SUS_Board::SUS_Board() : Board(3, 3) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
 }
 
+/**
+ * @brief Updates the SUS board with a new move.
+ *
+ * Standard bounds and occupancy checks are applied. The symbol is converted
+ * to upper case when placed.
+ *
+ * @param move Pointer to the move.
+ * @return @c true if the move is valid and applied, otherwise @c false.
+ */
 bool SUS_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -421,6 +663,16 @@ bool SUS_Board::update_board(Move<char>* move) {
     return false;
 }
 
+/**
+ * @brief Checks if player U (second player) wins the SUS game.
+ *
+ * The game forms the word "SUS" on rows, columns, or diagonals.
+ * The @c sus_count array is used to record the number of SUS lines
+ * for each player, but the final winner is only decided at 9 moves.
+ *
+ * @param player Pointer to the player (used indirectly via @c n_moves).
+ * @return @c true if player U has more SUS lines at the end, otherwise @c false.
+ */
 bool SUS_Board::is_win(Player<char>* player) {
     for (int i = 0; i < 3; ++i) {
         if (board[0][i] == 'S' && board[1][i] == 'U' && board[2][i] == 'S' && !taken[check({ 0,i }, { 1,i }, { 2,i })]) {
@@ -447,6 +699,15 @@ bool SUS_Board::is_win(Player<char>* player) {
 
     return false;
 }
+
+/**
+ * @brief Checks if the given player loses the SUS game.
+ *
+ * Loss occurs when the opponent has more SUS lines after 9 moves.
+ *
+ * @param player Pointer to the player (index used in @c sus_count).
+ * @return @c true if the player loses, otherwise @c false.
+ */
 bool SUS_Board::is_lose(Player<char>* player) {
     if (n_moves == 9 && sus_count[1] < sus_count[0]) {
         return true;
@@ -454,6 +715,15 @@ bool SUS_Board::is_lose(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the SUS game is a draw.
+ *
+ * Draw occurs when both players have the same number of SUS lines
+ * after all 9 moves.
+ *
+ * @param player Pointer to player (unused for logic).
+ * @return @c true if draw, otherwise @c false.
+ */
 bool SUS_Board::is_draw(Player<char>* player) {
     if (n_moves == 9 && sus_count[0] == sus_count[1]) {
         return true;
@@ -461,14 +731,33 @@ bool SUS_Board::is_draw(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the SUS game is over.
+ *
+ * The game is over after the 9th move regardless of result.
+ *
+ * @param player Pointer to player.
+ * @return Always @c true when @c n_moves == 9.
+ */
 bool SUS_Board::game_is_over(Player<char>* player) {
     return (n_moves == 9);
 }
 
 //--------------------------------------- SUS_UI Implementation
 
+/**
+ * @brief Default constructor for SUS game UI.
+ */
 SUS_UI::SUS_UI() : UI<char>("Welcome to our SUS Game", 3) {}
 
+/**
+ * @brief Creates a player for the SUS game UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol ('S' or 'U').
+ * @param type Player type.
+ * @return Pointer to new player.
+ */
 Player<char>* SUS_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
         << " player: " << name << " (" << symbol << ")\n";
@@ -476,6 +765,12 @@ Player<char>* SUS_UI::create_player(string& name, char symbol, PlayerType type) 
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the current player in SUS UI.
+ *
+ * @param player Pointer to the player.
+ * @return Pointer to the new move.
+ */
 Move<char>* SUS_UI::get_move(Player<char>* player) {
     int x, y;
 
@@ -490,7 +785,11 @@ Move<char>* SUS_UI::get_move(Player<char>* player) {
     return new Move<char>(x, y, player->get_symbol());
 }
 
-
+/**
+ * @brief Sets up the two SUS players (S and U) via UI prompts.
+ *
+ * @return Dynamic array of two @c Player<char>* (Player S, Player U).
+ */
 Player<char>** SUS_UI::setup_players() {
     Player<char>** players = new Player<char>*[2];
     vector<string> type_options = { "Human", "Computer" };
@@ -507,6 +806,12 @@ Player<char>** SUS_UI::setup_players() {
 }
 
 //--------------------------------------Inverse_X_O_Board Implementation
+
+/**
+ * @brief Constructs an inverse 3x3 X-O board initialized to blanks.
+ *
+ * Inverse X-O is a variant where forming a 3-in-a-row causes a loss.
+ */
 X_O_Inverse_Board::X_O_Inverse_Board() : Board(3, 3) {
     // Initialize all cells with blank_symbol
     for (auto& row : board)
@@ -514,6 +819,15 @@ X_O_Inverse_Board::X_O_Inverse_Board() : Board(3, 3) {
             cell = blank_symbol;
 }
 
+/**
+ * @brief Updates the inverse X-O board with a move.
+ *
+ * Standard bounds and occupancy checks are applied and symbols are uppercased.
+ * A move with symbol 0 is treated as an undo.
+ *
+ * @param move Pointer to the move.
+ * @return @c true if move is valid and applied, otherwise @c false.
+ */
 bool X_O_Inverse_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -536,6 +850,14 @@ bool X_O_Inverse_Board::update_board(Move<char>* move) {
     return false;
 }
 
+/**
+ * @brief Checks whether the given player has lost in inverse X-O.
+ *
+ * A loss occurs if the player forms a 3-in-a-row (rows, columns, diagonals).
+ *
+ * @param player Pointer to the player.
+ * @return @c true if the player has lost, otherwise @c false.
+ */
 bool X_O_Inverse_Board::is_lose(Player<char>* player) {
     const char sym = player->get_symbol();
 
@@ -558,18 +880,43 @@ bool X_O_Inverse_Board::is_lose(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the inverse X-O game is a draw.
+ *
+ * Draw occurs when all 9 moves are played and the player has not lost.
+ *
+ * @param player Pointer to the player to check loss.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool X_O_Inverse_Board::is_draw(Player<char>* player) {
     return (n_moves == 9 && !is_lose(player));
 }
 
+/**
+ * @brief Checks whether the inverse X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if player has lost or the game is a draw, otherwise @c false.
+ */
 bool X_O_Inverse_Board::game_is_over(Player<char>* player) {
     return is_lose(player) || is_draw(player);
 }
 
 //--------------------------------------- XO_UI Implementation
 
+/**
+ * @brief Default constructor for inverse X-O UI.
+ */
 XO_Inverse_UI::XO_Inverse_UI() : UI<char>("Weclome to FCAI X-O Game by Dr El-Ramly", 3) {}
 
+/**
+ * @brief Creates a player for inverse X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to the created player.
+ */
 Player<char>* XO_Inverse_UI::create_player(string& name, char symbol, PlayerType type) {
     // Create player based on type
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
@@ -578,6 +925,12 @@ Player<char>* XO_Inverse_UI::create_player(string& name, char symbol, PlayerType
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the current player in inverse X-O UI.
+ *
+ * @param player Pointer to the player.
+ * @return Pointer to the new move.
+ */
 Move<char>* XO_Inverse_UI::get_move(Player<char>* player) {
     int x, y;
 
@@ -594,6 +947,11 @@ Move<char>* XO_Inverse_UI::get_move(Player<char>* player) {
 
 //--------------------------------------- Pyramid_X_O_Board Implementation
 
+/**
+ * @brief Constructs a Pyramid X-O board (3x5) and initializes the pyramid shape.
+ *
+ * Invalid cells are represented with '*' on the internal board.
+ */
 Pyramid_X_O_Board::Pyramid_X_O_Board() : Board(3, 5) {
     // Initialize all cells with blank_symbol
     for (auto& row : board)
@@ -603,6 +961,14 @@ Pyramid_X_O_Board::Pyramid_X_O_Board() : Board(3, 5) {
     board[1][0] = '*'; board[1][4] = '*';
 }
 
+/**
+ * @brief Updates the Pyramid X-O board with a move.
+ *
+ * Bounds and occupancy are checked; symbol is uppercased.
+ *
+ * @param move Pointer to the move.
+ * @return @c true if the move is valid and applied, otherwise @c false.
+ */
 bool Pyramid_X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -622,6 +988,15 @@ bool Pyramid_X_O_Board::update_board(Move<char>* move) {
     }
     return false;
 }
+
+/**
+ * @brief Checks if the given player has a winning triple in Pyramid X-O.
+ *
+ * The win patterns follow lines inside the pyramid.
+ *
+ * @param player Pointer to the player.
+ * @return @c true if player has a winning line, otherwise @c false.
+ */
 bool Pyramid_X_O_Board::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
     auto all_equal = [&](char a, char b, char c) {
@@ -642,16 +1017,49 @@ bool Pyramid_X_O_Board::is_win(Player<char>* player) {
     }
     return false;
 }
+
+/**
+ * @brief Checks if the given player loses in Pyramid X-O.
+ *
+ * This variant does not define a losing condition separate from not winning.
+ *
+ * @param player Pointer to player.
+ * @return Always @c false.
+ */
 bool Pyramid_X_O_Board::is_lose(Player<char>* player) {
     return false;
 }
+
+/**
+ * @brief Checks if the Pyramid X-O game is a draw.
+ *
+ * Draw occurs when 9 moves have been played with no winner.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool Pyramid_X_O_Board::is_draw(Player<char>* player) {
     return (n_moves == 9 && !is_win(player));
 }
+
+/**
+ * @brief Checks if Pyramid X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool Pyramid_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
+/**
+ * @brief Creates a player for Pyramid X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* Pyramid_XO_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating Pyramid X-O Player: " << name
         << " (" << symbol << ") - "
@@ -660,6 +1068,12 @@ Player<char>* Pyramid_XO_UI::create_player(string& name, char symbol, PlayerType
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for Pyramid X-O.
+ *
+ * @param player Pointer to the player.
+ * @return Pointer to the new move.
+ */
 Move<char>* Pyramid_XO_UI::get_move(Player<char>* player) {
     int x, y;
     if (player->get_type() == PlayerType::HUMAN) {
@@ -676,13 +1090,23 @@ Move<char>* Pyramid_XO_UI::get_move(Player<char>* player) {
 
 //--------------------------------------- Word_X_O_Board Implementation
 
-
+/**
+ * @brief Constructs a 3x3 WORD X-O board with all cells blank.
+ */
 X_O_Board_WORD::X_O_Board_WORD() : Board(3, 3) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
 }
 
+/**
+ * @brief Creates a player for WORD X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* XO_UI_WORD::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
         << " player: " << name << " (" << symbol << ")\n";
@@ -690,6 +1114,15 @@ Player<char>* XO_UI_WORD::create_player(string& name, char symbol, PlayerType ty
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for WORD X-O.
+ *
+ * Human players input (row, column, letter), and computer players choose random
+ * positions and random letters.
+ *
+ * @param player Pointer to the player.
+ * @return Pointer to the new move.
+ */
 Move<char>* XO_UI_WORD::get_move(Player<char>* player) {
     int x, y;
     char mark;
@@ -707,6 +1140,12 @@ Move<char>* XO_UI_WORD::get_move(Player<char>* player) {
     return new Move<char>(x, y, mark);
 }
 
+/**
+ * @brief Updates the WORD X-O board with a new symbol.
+ *
+ * @param move Pointer to the move with coordinates and character.
+ * @return @c true if move is valid and applied, otherwise @c false.
+ */
 bool X_O_Board_WORD::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -729,6 +1168,15 @@ bool X_O_Board_WORD::update_board(Move<char>* move) {
     return false;
 }
 
+/**
+ * @brief Checks if any row, column, or diagonal forms a valid dictionary word.
+ *
+ * Both normal and reversed directions are checked against the dictionary
+ * set @c s.
+ *
+ * @param player Pointer to player (unused in logic).
+ * @return @c true if any 3-letter line forms a valid word, otherwise @c false.
+ */
 bool X_O_Board_WORD::is_win(Player<char>* player) {
 
     // Check rows and columns
@@ -779,10 +1227,24 @@ bool X_O_Board_WORD::is_win(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the WORD X-O game is a draw.
+ *
+ * A draw occurs when 9 moves are played and there is no valid word.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool X_O_Board_WORD::is_draw(Player<char>* player) {
     return (n_moves == 9 && !is_win(player));
 }
 
+/**
+ * @brief Checks whether the WORD X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool X_O_Board_WORD::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
@@ -790,6 +1252,9 @@ bool X_O_Board_WORD::game_is_over(Player<char>* player) {
 
 //--------------------------------------- Connect4 Implementation
 
+/**
+ * @brief Constructs a 6x7 Connect 4 board initialized to blanks.
+ */
 Connect4_Board::Connect4_Board() : Board(6, 7) {
     // Initialize all cells with blank_symbol
     for (auto& row : board)
@@ -797,6 +1262,14 @@ Connect4_Board::Connect4_Board() : Board(6, 7) {
             cell = blank_symbol;
 }
 
+/**
+ * @brief Updates the Connect 4 board with a new move.
+ *
+ * A piece must either be on the bottom row or sit on top of another piece.
+ *
+ * @param move Pointer to the move containing (row, column, symbol).
+ * @return @c true if move is valid and applied, otherwise @c false.
+ */
 bool Connect4_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -819,6 +1292,14 @@ bool Connect4_Board::update_board(Move<char>* move) {
     return false;
 }
 
+/**
+ * @brief Checks if the given player has 4 in a row in Connect 4.
+ *
+ * All horizontal, vertical, and diagonal lines of length 4 are checked.
+ *
+ * @param player Pointer to the player.
+ * @return @c true if the player has a connect-4, otherwise @c false.
+ */
 bool Connect4_Board::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
 
@@ -857,16 +1338,41 @@ bool Connect4_Board::is_win(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the Connect 4 game is a draw.
+ *
+ * Draw occurs when the board is full (42 moves) with no winner.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool Connect4_Board::is_draw(Player<char>* player) {
     return (n_moves == 42 && !is_win(player));
 }
 
+/**
+ * @brief Checks whether the Connect 4 game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool Connect4_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
+/**
+ * @brief Default constructor for Connect 4 UI.
+ */
 Connect4_UI::Connect4_UI() : UI<char>("Weclome to FCAI X-O Game by Dr El-Ramly", 3) {}
 
+/**
+ * @brief Creates a player for the Connect 4 UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* Connect4_UI::create_player(string& name, char symbol, PlayerType type) {
     // Create player based on type
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
@@ -875,6 +1381,12 @@ Player<char>* Connect4_UI::create_player(string& name, char symbol, PlayerType t
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for Connect 4.
+ *
+ * @param player Pointer to the player.
+ * @return Pointer to the new move.
+ */
 Move<char>* Connect4_UI::get_move(Player<char>* player) {
     int x, y;
 
@@ -891,6 +1403,12 @@ Move<char>* Connect4_UI::get_move(Player<char>* player) {
 
 //--------------------------------------- Memo_XO_Classes.cpp
 
+/**
+ * @brief Constructs a Memory X-O board and initializes the revealed matrix.
+ *
+ * The public board shows '#' for hidden cells, while @c revealed stores
+ * the actual underlying symbols.
+ */
 Memo_X_O_Board::Memo_X_O_Board() : Board(3, 3) {
     // Initialize all cells with blank_symbol
     for (auto& row : board)
@@ -898,6 +1416,16 @@ Memo_X_O_Board::Memo_X_O_Board() : Board(3, 3) {
             cell = blank_symbol;
     revealed = vector<vector<char>>(3, vector<char>(3, blank_symbol));
 }
+
+/**
+ * @brief Updates the Memory X-O board with a new hidden move.
+ *
+ * The symbol is placed in @c revealed, whereas the public board
+ * simply shows '#'.
+ *
+ * @param move Pointer to the move.
+ * @return @c true if the move is valid and applied, otherwise @c false.
+ */
 bool Memo_X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -921,6 +1449,14 @@ bool Memo_X_O_Board::update_board(Move<char>* move) {
     return true;
 }
 
+/**
+ * @brief Checks whether the given player has a winning 3-in-a-row on the hidden board.
+ *
+ * The check is done on the @c revealed array, not the public board.
+ *
+ * @param player Pointer to the player.
+ * @return @c true if player has a winning line, otherwise @c false.
+ */
 bool Memo_X_O_Board::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
     auto all_equal = [&](char a, char b, char c) {
@@ -938,13 +1474,37 @@ bool Memo_X_O_Board::is_win(Player<char>* player) {
         return true;
     return false;
 }
+
+/**
+ * @brief Checks if the Memory X-O game is a draw.
+ *
+ * Draw occurs after 9 moves with no winner.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool Memo_X_O_Board::is_draw(Player<char>* player) {
     return (n_moves == 9 && !is_win(player));
 }
+
+/**
+ * @brief Checks whether the Memory X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool Memo_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
+/**
+ * @brief Creates a player for Memory X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* Memo_XO_UI::create_player(string& name, char symbol, PlayerType type) {
     // Create player based on type
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
@@ -952,6 +1512,12 @@ Player<char>* Memo_XO_UI::create_player(string& name, char symbol, PlayerType ty
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for Memory X-O.
+ *
+ * @param player Pointer to player.
+ * @return Pointer to new move.
+ */
 Move<char>* Memo_XO_UI::get_move(Player<char>* player) {
     int x, y;
     if (player->get_type() == PlayerType::HUMAN) {
@@ -966,6 +1532,12 @@ Move<char>* Memo_XO_UI::get_move(Player<char>* player) {
 }
 
 //--------------------------------------- Diamond_X_O_Board Implementation
+
+/**
+ * @brief Constructs a 7x7 Diamond X-O board with a diamond-shaped valid region.
+ *
+ * Valid cells (forming a diamond) are initialized with '.', invalid ones with '$'.
+ */
 Diamond_X_O_Board::Diamond_X_O_Board() :Board<char>(7, 7) {
     for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
@@ -982,7 +1554,14 @@ Diamond_X_O_Board::Diamond_X_O_Board() :Board<char>(7, 7) {
     n_moves = 0;
 }
 
-
+/**
+ * @brief Updates the Diamond X-O board with a new move.
+ *
+ * The move must target a valid diamond cell that is empty.
+ *
+ * @param move Pointer to the move.
+ * @return @c true if move valid and applied, otherwise @c false.
+ */
 bool Diamond_X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -997,7 +1576,15 @@ bool Diamond_X_O_Board::update_board(Move<char>* move) {
     return true;
 }
 
-
+/**
+ * @brief Collects all lines of a given length formed by the player's symbol.
+ *
+ * The lines are checked in 4 directions: horizontal, vertical, and both diagonals.
+ *
+ * @param player Pointer to the player.
+ * @param len Desired line length (e.g., 3 or 4).
+ * @return Vector of lines, each line being a list of (row, col) points.
+ */
 std::vector<Diamond_X_O_Board::Line>
 Diamond_X_O_Board::collect_lines(Player<char>* player, int len) const {
 
@@ -1054,6 +1641,17 @@ Diamond_X_O_Board::collect_lines(Player<char>* player, int len) const {
 
     return lines;
 }
+
+/**
+ * @brief Checks if the player has won in the Diamond X-O game.
+ *
+ * A win occurs if the player has at least one line of length 3 and
+ * one line of length 4 that intersect at exactly one common cell
+ * and are not collinear (different directions).
+ *
+ * @param player Pointer to the player.
+ * @return @c true if the win condition is satisfied, otherwise @c false.
+ */
 bool Diamond_X_O_Board::is_win(Player<char>* player) {
     auto lines3 = collect_lines(player, 3);
     auto lines4 = collect_lines(player, 4);
@@ -1090,20 +1688,53 @@ bool Diamond_X_O_Board::is_win(Player<char>* player) {
 
     return false;
 }
+
+/**
+ * @brief Checks if the Diamond X-O game is a draw.
+ *
+ * Draw occurs when at least 25 moves have been played and no win.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool Diamond_X_O_Board::is_draw(Player<char>* player) {
     return (n_moves >= 25 && !is_win(player));
 }
 
+/**
+ * @brief Checks whether the Diamond X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool Diamond_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
+
+/**
+ * @brief Default constructor for Diamond X-O UI.
+ */
 Diamond_X_O_UI::Diamond_X_O_UI() : UI<char>("Welcome to Diamond 7x7 Tic-Tac-Toe", 3) {}
 
+/**
+ * @brief Creates a player for the Diamond X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* Diamond_X_O_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating Diamond Player: " << name << " (" << symbol << ")\n";
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for Diamond X-O UI.
+ *
+ * @param player Pointer to player.
+ * @return Pointer to new move.
+ */
 Move<char>* Diamond_X_O_UI::get_move(Player<char>* player) {
     int x, y;
     if (player->get_type() == PlayerType::HUMAN) {
@@ -1123,13 +1754,28 @@ Move<char>* Diamond_X_O_UI::get_move(Player<char>* player) {
         return new Move<char>(rx, ry, player->get_symbol());
     }
 }
+
 //--------------------------------------------------- Obstacle_X_O_Board Implementation
 
+/**
+ * @brief Creates a player for Obstacle Tic Tac Toe UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* obstacles_XO_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating Obstacle Player: " << name << " (" << symbol << ")\n";
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from player for Obstacle Tic Tac Toe.
+ *
+ * @param player Pointer to player.
+ * @return Pointer to new move.
+ */
 Move<char>* obstacles_XO_UI::get_move(Player<char>* player) {
     int x, y;
     if (player->get_type() == PlayerType::HUMAN) {
@@ -1143,12 +1789,24 @@ Move<char>* obstacles_XO_UI::get_move(Player<char>* player) {
     return new Move<char>(x, y, player->get_symbol());
 }
 
+/**
+ * @brief Constructs a 6x6 Obstacle X-O board with all cells blank.
+ */
 obstacles_X_O_Board::obstacles_X_O_Board() : Board(6, 6) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
 }
 
+/**
+ * @brief Updates the Obstacle X-O board with a new move.
+ *
+ * Every second move (even @c n_moves), two random empty cells are turned into
+ * obstacles ('#'). Obstacles cannot be used again.
+ *
+ * @param move Pointer to the move.
+ * @return @c true if update succeeded, otherwise @c false.
+ */
 bool obstacles_X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -1164,59 +1822,110 @@ bool obstacles_X_O_Board::update_board(Move<char>* move) {
             n_moves++;
             board[x][y] = toupper(mark);
             if (n_moves % 2 == 0) {
-                board[rand() % 6][rand() % 6] = '#';
-                board[rand() % 6][rand() % 6] = '#';
+                int u = rand() % 6;
+                int i = rand() % 6;
+                int v = rand() % 6;
+                int b = rand() % 6;
+                while (((board[u][i] != blank_symbol || board[u][i] == '#') && (board[b][v] != blank_symbol || board[b][v] == '#')) || (u == b && i == v)) {
+                    u = rand() % 6;
+                    i = rand() % 6;
+                    v = rand() % 6;
+                    b = rand() % 6;
+                }
+                board[u][i] = '#';
+                board[b][v] = '#';
             }
         }
     }
     return true;
 }
 
+/**
+ * @brief Checks if the given player has a 4-in-a-row on Obstacle X-O board.
+ *لا 
+ * All horizontal, vertical and diagonal triples are checked, ignoring obstacles.
+ *
+ * @param player Pointer to player.
+ * @return @c true if player has winning line, otherwise @c false.
+ */
 bool obstacles_X_O_Board::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
-    auto all_equal = [&](char a, char b, char c) {
-        return a == b && b == c && a != blank_symbol;
+
+    // 4 in a row helper
+    auto all_equal4 = [&](char a, char b, char c, char d) {
+        return a == sym && a == b && b == c && c == d
+            && a != blank_symbol && a != obstacle_symbol;
         };
 
-    // Check rows and columns
+    // Check rows (horizontal)
     for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < columns - 2; ++j) {
-            if (all_equal(board[i][j], board[i][j + 1], board[i][j + 2]) && board[i][j] == sym)
+        for (int j = 0; j < columns - 3; ++j) { 
+            if (all_equal4(board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3]))
                 return true;
         }
     }
+
+    // Check columns (vertical)
     for (int j = 0; j < columns; ++j) {
-        for (int i = 0; i < rows - 2; ++i) {
-            if (all_equal(board[i][j], board[i + 1][j], board[i + 2][j]) && board[i][j] == sym)
+        for (int i = 0; i < rows - 3; ++i) {     
+            if (all_equal4(board[i][j], board[i + 1][j], board[i + 2][j], board[i + 3][j]))
                 return true;
         }
     }
-    // Check diagonals
-    for (int i = 0; i < rows - 2; ++i) {
-        for (int j = 0; j < columns - 2; ++j) {
-            if (all_equal(board[i][j], board[i + 1][j + 1], board[i + 2][j + 2]) && board[i][j] == sym)
+
+    // Check main diagonals (\)
+    for (int i = 0; i < rows - 3; ++i) {
+        for (int j = 0; j < columns - 3; ++j) {
+            if (all_equal4(board[i][j], board[i + 1][j + 1],
+                board[i + 2][j + 2], board[i + 3][j + 3]))
                 return true;
         }
     }
-    for (int i = 0; i < rows - 2; ++i) {
-        for (int j = 2; j < columns; ++j) {
-            if (all_equal(board[i][j], board[i + 1][j - 1], board[i + 2][j - 2]) && board[i][j] == sym)
+
+    for (int i = 0; i < rows - 3; ++i) {
+        for (int j = 3; j < columns; ++j) { 
+            if (all_equal4(board[i][j], board[i + 1][j - 1],
+                board[i + 2][j - 2], board[i + 3][j - 3]))
                 return true;
         }
     }
 
     return false;
 }
+
+
+/**
+ * @brief Checks if Obstacle X-O is a draw.
+ *
+ * Draw occurs when all 36 cells are used with no winner.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool obstacles_X_O_Board::is_draw(Player<char>* player) {
     return (n_moves == 36 && !is_win(player));
 }
+
+/**
+ * @brief Checks whether the Obstacle X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool obstacles_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
 // ------------------------------ 5x5 X-O board 
 
-
+/**
+ * @brief Creates a player for 5x5 X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* XO_UI_5::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
         << " player: " << name << " (" << symbol << ")\n";
@@ -1224,6 +1933,12 @@ Player<char>* XO_UI_5::create_player(string& name, char symbol, PlayerType type)
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for 5x5 X-O.
+ *
+ * @param player Pointer to player.
+ * @return Pointer to new move.
+ */
 Move<char>* XO_UI_5::get_move(Player<char>* player) {
     int x, y;
 
@@ -1239,6 +1954,11 @@ Move<char>* XO_UI_5::get_move(Player<char>* player) {
     return new Move<char>(x, y, player->get_symbol());
 }
 
+/**
+ * @brief Constructs a 5x5 X-O board with all cells blank.
+ *
+ * The game is scored by counting the number of 3-in-a-row lines for each player.
+ */
 X_O_Board_5::X_O_Board_5() : Board(5, 5) {
     for (int i = 0;i < rows;++i)
         for (int j = 0;j < columns;++j)
@@ -1246,6 +1966,14 @@ X_O_Board_5::X_O_Board_5() : Board(5, 5) {
     n_moves = 0;
 }
 
+/**
+ * @brief Updates the 5x5 X-O board with a new move.
+ *
+ * The board does not allow moves after 24 total moves.
+ *
+ * @param move Pointer to move.
+ * @return @c true if move valid and applied, otherwise @c false.
+ */
 bool X_O_Board_5::update_board(Move<char>* move) {
     int x = move->get_x(), y = move->get_y();
     char mark = toupper(move->get_symbol());
@@ -1256,6 +1984,14 @@ bool X_O_Board_5::update_board(Move<char>* move) {
     return true;
 }
 
+/**
+ * @brief Counts the number of 3-in-a-row lines for a given symbol on the 5x5 board.
+ *
+ * All horizontal, vertical and diagonal triplets are considered.
+ *
+ * @param sym The symbol to count lines for ('X' or 'O').
+ * @return Number of 3-in-a-row occurrences.
+ */
 int X_O_Board_5::count_three_in_row(char sym) {
     int count = 0;
     int rows = 5, cols = 5;
@@ -1302,6 +2038,15 @@ int X_O_Board_5::count_three_in_row(char sym) {
     return count;
 }
 
+/**
+ * @brief Checks if the given player wins in 5x5 X-O by having more lines.
+ *
+ * After at least 24 moves, the total 3-in-a-row counts for 'X' and 'O'
+ * are compared. The player wins iff their symbol has more lines.
+ *
+ * @param player Pointer to player.
+ * @return @c true if the player wins, otherwise @c false.
+ */
 bool X_O_Board_5::is_win(Player<char>* player) {
     if (n_moves < 24) return false;
 
@@ -1316,6 +2061,12 @@ bool X_O_Board_5::is_win(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the given player loses in 5x5 X-O by having fewer lines.
+ *
+ * @param player Pointer to player.
+ * @return @c true if the player loses, otherwise @c false.
+ */
 bool X_O_Board_5::is_lose(Player<char>* player) {
     if (n_moves < 24) return false;
 
@@ -1330,6 +2081,14 @@ bool X_O_Board_5::is_lose(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the 5x5 X-O game is a draw.
+ *
+ * Draw occurs after 24 moves when both players have the same line count.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool X_O_Board_5::is_draw(Player<char>* player) {
     if (n_moves < 24) return false;
     char me = toupper(player->get_symbol());
@@ -1339,16 +2098,39 @@ bool X_O_Board_5::is_draw(Player<char>* player) {
 
 }
 
+/**
+ * @brief Checks whether the 5x5 X-O game is over.
+ *
+ * Game is considered over after 24 moves, regardless of result.
+ *
+ * @param player Pointer to player.
+ * @return @c true if game reached 24 moves, otherwise @c false.
+ */
 bool X_O_Board_5::game_is_over(Player<char>* player) {
     return n_moves >= 24;
 }
 
 //--------------------------------------------------- Ultimate_X_O_Board Implementation
+
+/**
+ * @brief Constructs a 9x9 Ultimate X-O board with all cells blank.
+ *
+ * The board is composed of 9 sub-boards (3x3 each) forming a meta-game.
+ */
 Ultimate_X_O_Board::Ultimate_X_O_Board() : Board(9, 9) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
 }
+
+/**
+ * @brief Prints the 3x3 meta-board of Ultimate X-O.
+ *
+ * Each meta cell represents the winner of a 3x3 sub-board:
+ * - 'X' if X won,
+ * - 'O' if O won,
+ * - ' ' (space) otherwise.
+ */
 void Ultimate_X_O_Board::print_meta_board() {
     cout << "\nMeta Board (3x3):\n";
     cout << "+---+---+---+\n";
@@ -1363,6 +2145,12 @@ void Ultimate_X_O_Board::print_meta_board() {
     }
 }
 
+/**
+ * @brief Updates the @c main_board meta-board based on sub-board winners.
+ *
+ * For each 3x3 block in the 9x9 board, a winner is determined and stored
+ * in the corresponding meta cell.
+ */
 void Ultimate_X_O_Board::update_meta_board() {
 
     for (int i = 0; i < 3; i++)
@@ -1396,7 +2184,7 @@ void Ultimate_X_O_Board::update_meta_board() {
                 return sym;
         }
 
-        return '.'; 
+        return '.';
         };
 
     for (int bi = 0; bi < 3; bi++)
@@ -1404,6 +2192,14 @@ void Ultimate_X_O_Board::update_meta_board() {
             main_board[bi][bj] = check_winner(bi, bj);
 }
 
+/**
+ * @brief Updates the 9x9 Ultimate X-O board with a move.
+ *
+ * After updating a cell, the meta board is recomputed and printed.
+ *
+ * @param move Pointer to move.
+ * @return @c true if move is valid and applied, otherwise @c false.
+ */
 bool Ultimate_X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -1425,6 +2221,18 @@ bool Ultimate_X_O_Board::update_board(Move<char>* move) {
     }
     return false;
 }
+
+/**
+ * @brief Checks if the given player wins in the Ultimate X-O meta-game.
+ *
+ * The method:
+ * 1. Determines which sub-boards the player has won and marks them on
+ *    @c main_board.
+ * 2. Checks if there is a 3-in-a-row on the meta-board for that player.
+ *
+ * @param player Pointer to player.
+ * @return @c true if the player wins the meta-game, otherwise @c false.
+ */
 bool Ultimate_X_O_Board::is_win(Player<char>* player) {
     char sym = player->get_symbol();
 
@@ -1509,13 +2317,37 @@ bool Ultimate_X_O_Board::is_win(Player<char>* player) {
     return false;
 }
 
+/**
+ * @brief Checks if the Ultimate X-O game is a draw.
+ *
+ * The game is a draw when all 81 cells (including converted '#' cells) are
+ * effectively used without a winner.
+ *
+ * @param player Pointer to player.
+ * @return @c true if draw, otherwise @c false.
+ */
 bool Ultimate_X_O_Board::is_draw(Player<char>* player) {
     return ((n_moves + y) == 81 && !is_win(player));
 }
+
+/**
+ * @brief Checks whether the Ultimate X-O game is over.
+ *
+ * @param player Pointer to player.
+ * @return @c true if win or draw, otherwise @c false.
+ */
 bool Ultimate_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
+/**
+ * @brief Creates a player for the Ultimate X-O UI.
+ *
+ * @param name Player name.
+ * @param symbol Player symbol.
+ * @param type Player type.
+ * @return Pointer to created player.
+ */
 Player<char>* Ultimate_X_O_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating Ultimate X-O Player: " << name
         << " (" << symbol << ") - "
@@ -1524,6 +2356,12 @@ Player<char>* Ultimate_X_O_UI::create_player(string& name, char symbol, PlayerTy
     return new Player<char>(name, symbol, type);
 }
 
+/**
+ * @brief Gets a move from the player for Ultimate X-O.
+ *
+ * @param player Pointer to player.
+ * @return Pointer to new move.
+ */
 Move<char>* Ultimate_X_O_UI::get_move(Player<char>* player) {
     int x, y;
     if (player->get_type() == PlayerType::HUMAN) {

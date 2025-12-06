@@ -29,7 +29,7 @@ using namespace std;
  *
  * @return int Returns 0 on successful execution.
  */
-void menu()
+void menu() 
 {
     cout << "Choose your option: \n";
     cout << " 1) SUS\n";
@@ -50,300 +50,335 @@ int main() {
     int x;
     menu();
     cin >> x;
-    if (x == 11) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+    bool play = true;
+    while (play) {
+        if (x == 11) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
 
-        // Create an instance of the specific UI for X-O using a pointer 
-        UI<char>* game_ui = new XO_UI();
+            // Create an instance of the specific UI for X-O using a pointer 
+            UI<char>* game_ui = new XO_UI();
 
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* xo_board = new X_O_Board();
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* xo_board = new X_O_Board();
 
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
 
-        // Create the game manager with the board and the array of players.
-        GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
 
-        // Run the game loop.
-        x_o_game.run();
+            // Run the game loop.
+            x_o_game.run();
 
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete xo_board;
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
 
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+
         }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
+        else if (x == 7) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
 
-        return 0;
+            // Create an instance of the specific UI for X-O using a pointer 
+            UI<char>* game_ui = new XO_UI4();
+
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* xo_board = new X_O_Board4();
+
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+
+            // Run the game loop.
+            x_o_game.run();
+
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+
+
+        }
+        else if (x == 9) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+            // Create an instance of the specific UI for X-O using a pointer 
+            UI<char>* game_ui = new XO_Num_UI();
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* xo_board = new X_O_Num_Board();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Run the game loop.
+            x_o_game.run();
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+        }
+        else if (x == 1) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+
+            // Create an instance of the specific UI for X-O using a pointer 
+            UI<char>* game_ui = new SUS_UI();
+
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* sus_board = new SUS_Board();
+
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+
+
+            // Create the game manager with the board and the array of players.
+            GameManager<char> sus_game(sus_board, players, game_ui);
+
+            // Run the game loop.
+            sus_game.run();
+
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete sus_board;
+
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+
+        }
+        else if (x == 5) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+            // Create an instance of the specific UI for X-O using a pointer
+            UI<char>* game_ui = new XO_Inverse_UI();
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* xo_board = new X_O_Inverse_Board();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Run the game loop.
+            x_o_game.run();
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            delete[] players;
+        }
+        else if (x == 4) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+
+            // Create an instance of the specific UI for X-O using a pointer 
+            UI<char>* game_ui = new XO_UI_WORD();
+
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* xo_board = new X_O_Board_WORD();
+
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+
+            // Run the game loop.
+            x_o_game.run();
+
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+
+        }
+        else if (x == 6) {
+            srand(static_cast<unsigned int>(time(0)));
+            UI<char>* game_ui = new Diamond_X_O_UI();
+            Board<char>* board = new Diamond_X_O_Board();
+            Player<char>** players = game_ui->setup_players();
+            GameManager<char> game(board, players, game_ui);
+
+            game.run();
+
+            delete board;
+            delete players[0];
+            delete players[1];
+            delete[] players;
+
+        }
+        else if (x == 8) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+            // Create an instance of the specific UI for X-O using a pointer
+            UI<char>* game_ui = new Pyramid_XO_UI();
+            // Create the game board. For X-O, this is an X_O_Board
+            Board<char>* xo_board = new Pyramid_X_O_Board();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Run the game loop.
+            x_o_game.run();
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+
+        }
+        else if (x == 2) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+
+            // Create an instance of the specific UI for X-O using a pointer 
+            UI<char>* game_ui = new Connect4_UI();
+
+            // Create the game board. For X-O, this is an X_O_Board.
+            Board<char>* connect4_board = new Connect4_Board();
+
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+
+            // Create the game manager with the board and the array of players.
+            GameManager<char> connect4_game(connect4_board, players, game_ui);
+
+            // Run the game loop.
+            connect4_game.run();
+
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete connect4_board;
+
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            // Delete the dynamically allocated array of player pointers itself.
+            delete[] players;
+
+        }
+        else if (x == 13) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+            // Create an instance of the specific UI for X-O using a pointer
+            UI<char>* game_ui = new Memo_XO_UI();
+            // Create the game board. For X-O, this is an X_O_Board
+            Board<char>* xo_board = new Memo_X_O_Board();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Run the game loop.
+            x_o_game.run();
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+        }
+        else if (x == 10) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+            // Create an instance of the specific UI for X-O using a pointer
+            UI<char>* game_ui = new obstacles_XO_UI();
+            // Create the game board. For X-O, this is an X_O_Board
+            Board<char>* xo_board = new obstacles_X_O_Board();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Run the game loop.
+            x_o_game.run();
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+        }
+
+
+        else if (x == 3) {
+            srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+            // Create an instance of the specific UI for X-O using a pointer
+            UI<char>* game_ui = new XO_UI_5();
+            // Create the game board. For X-O, this is an X_O_Board
+            Board<char>* xo_board = new X_O_Board_5();
+            // Use the UI to set up the players for the game.
+            // The UI returns a dynamically allocated array of Player pointers.
+            Player<char>** players = game_ui->setup_players();
+            // Create the game manager with the board and the array of players.
+            GameManager<char> x_o_game(xo_board, players, game_ui);
+            // Run the game loop.
+            x_o_game.run();
+            // --- Cleanup ---
+            // Delete the dynamically allocated board object.
+            delete xo_board;
+            // Delete the individual player objects.
+            for (int i = 0; i < 2; ++i) {
+                delete players[i];
+            }
+            delete[] players;
+        }
+        cout << "Do you want to play again ? " << endl;
+        cout << "1) Yes" << endl;
+        cout << "2) No" << endl;
+        int y;
+        cin >> y;
+        if (y == 1) {
+            cout << "1) Same last game" << endl;
+            cout << "2) Another game" << endl;
+            int u;
+            cin >> u;
+            if (u == 2) {
+                menu();
+                cin >> x;
+            }
+        }
+        else if (y == 2) {
+            play = false;
+        }
     }
-    else if (x == 7) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-
-        // Create an instance of the specific UI for X-O using a pointer 
-        UI<char>* game_ui = new XO_UI4();
-
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* xo_board = new X_O_Board4();
-
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-
-        // Create the game manager with the board and the array of players.
-        GameManager<char> x_o_game(xo_board, players, game_ui);
-
-        // Run the game loop.
-        x_o_game.run();
-
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete xo_board;
-
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
-
-        return 0; // Exit successfully
-
-    }
-    else if (x == 9) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-        // Create an instance of the specific UI for X-O using a pointer 
-        UI<char>* game_ui = new XO_Num_UI();
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* xo_board = new X_O_Num_Board();
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-        // Create the game manager with the board and the array of players.
-        GameManager<char> x_o_game(xo_board, players, game_ui);
-        // Run the game loop.
-        x_o_game.run();
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete xo_board;
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
-        return 0; // Exit successfully
-    }
-    else if (x == 1) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-
-        // Create an instance of the specific UI for X-O using a pointer 
-        UI<char>* game_ui = new SUS_UI();
-
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* sus_board = new SUS_Board();
-
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-
-
-        // Create the game manager with the board and the array of players.
-        GameManager<char> sus_game(sus_board, players, game_ui);
-
-        // Run the game loop.
-        sus_game.run();
-
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete sus_board;
-
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
-
-        return 0;
-    }
-    else if (x == 5) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-        // Create an instance of the specific UI for X-O using a pointer
-        UI<char>* game_ui = new XO_Inverse_UI();
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* xo_board = new X_O_Inverse_Board();
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-        // Create the game manager with the board and the array of players.
-        GameManager<char> x_o_game(xo_board, players, game_ui);
-        // Run the game loop.
-        x_o_game.run();
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete xo_board;
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-
-            return 0;
-        }
-    }
-    else if (x == 4) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-
-        // Create an instance of the specific UI for X-O using a pointer 
-        UI<char>* game_ui = new XO_UI_WORD();
-
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* xo_board = new X_O_Board_WORD();
-
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-
-        // Create the game manager with the board and the array of players.
-        GameManager<char> x_o_game(xo_board, players, game_ui);
-
-        // Run the game loop.
-        x_o_game.run();
-
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete xo_board;
-
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
-
-        return 0;
-        }
-		 else if (x == 6) {
-        srand(static_cast<unsigned int>(time(0)));
-        UI<char>* game_ui = new Diamond_X_O_UI();
-        Board<char>* board = new Diamond_X_O_Board();
-        Player<char>** players = game_ui->setup_players();
-        GameManager<char> game(board, players, game_ui);
-
-        game.run();
-
-        delete board;
-        delete players[0];
-        delete players[1];
-        delete[] players;
-        return 0;
-
-    }
-    else if (x == 8) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-        // Create an instance of the specific UI for X-O using a pointer
-        UI<char>* game_ui = new Pyramid_XO_UI();
-        // Create the game board. For X-O, this is an X_O_Board
-        Board<char>* xo_board = new Pyramid_X_O_Board();
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-        // Create the game manager with the board and the array of players.
-        GameManager<char> x_o_game(xo_board, players, game_ui);
-        // Run the game loop.
-        x_o_game.run();
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete xo_board;
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
-
-        return 0;
-        }
-    else if (x == 2) {
-        srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-
-        // Create an instance of the specific UI for X-O using a pointer 
-        UI<char>* game_ui = new Connect4_UI();
-
-        // Create the game board. For X-O, this is an X_O_Board.
-        Board<char>* connect4_board = new Connect4_Board();
-
-        // Use the UI to set up the players for the game.
-        // The UI returns a dynamically allocated array of Player pointers.
-        Player<char>** players = game_ui->setup_players();
-
-        // Create the game manager with the board and the array of players.
-        GameManager<char> connect4_game(connect4_board, players, game_ui);
-
-        // Run the game loop.
-        connect4_game.run();
-
-        // --- Cleanup ---
-        // Delete the dynamically allocated board object.
-        delete connect4_board;
-
-        // Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-        // Delete the dynamically allocated array of player pointers itself.
-        delete[] players;
-
-        return 0; // Exit successfully
-        }
-    else if (x == 13) {
-		srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-		// Create an instance of the specific UI for X-O using a pointer
-		UI<char>* game_ui = new Memo_XO_UI();
-		// Create the game board. For X-O, this is an X_O_Board
-		Board<char>* xo_board = new Memo_X_O_Board();
-		// Use the UI to set up the players for the game.
-		// The UI returns a dynamically allocated array of Player pointers.
-		Player<char>** players = game_ui->setup_players();
-		// Create the game manager with the board and the array of players.
-		GameManager<char> x_o_game(xo_board, players, game_ui);
-		// Run the game loop.
-		x_o_game.run();
-		// --- Cleanup ---
-		// Delete the dynamically allocated board object.
-		delete xo_board;
-		// Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-			return 0;
-        }
-    else if (x == 10) {
-		srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-		// Create an instance of the specific UI for X-O using a pointer
-		UI<char>* game_ui = new obstacles_XO_UI();
-		// Create the game board. For X-O, this is an X_O_Board
-		Board<char>* xo_board = new obstacles_X_O_Board();
-		// Use the UI to set up the players for the game.
-		// The UI returns a dynamically allocated array of Player pointers.
-		Player<char>** players = game_ui->setup_players();
-		// Create the game manager with the board and the array of players.
-		GameManager<char> x_o_game(xo_board, players, game_ui);
-		// Run the game loop.
-		x_o_game.run();
-		// --- Cleanup ---
-		// Delete the dynamically allocated board object.
-		delete xo_board;
-		// Delete the individual player objects.
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-		return 0;
-        }
+    return 0;
 }
 
 // ========================================

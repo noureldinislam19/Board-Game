@@ -151,7 +151,7 @@ bool X_O_Board4::update_board(Move<char>* move)
 
     int x = dm->get_x();
     int y = dm->get_y();
-    char d = dm->get_direction();      
+    char d = dm->get_direction();
     char mark = dm->get_symbol();
 
     // Validate source
@@ -200,7 +200,7 @@ bool X_O_Board4::is_win(Player<char>* player) {
         if ((all_equal(board[i][0], board[i][1], board[i][2]) && board[i][0] == sym) ||
             (all_equal(board[0][i], board[1][i], board[2][i]) && board[0][i] == sym) ||
             (all_equal(board[i][1], board[i][2], board[i][3]) && board[i][1] == sym) ||
-			(all_equal(board[1][i], board[2][i], board[3][i]) && board[1][i] == sym))
+            (all_equal(board[1][i], board[2][i], board[3][i]) && board[1][i] == sym))
             return true;
     }
 
@@ -208,13 +208,13 @@ bool X_O_Board4::is_win(Player<char>* player) {
     if ((all_equal(board[0][0], board[1][1], board[2][2]) && board[1][1] == sym) ||
         (all_equal(board[0][2], board[1][1], board[2][0]) && board[1][1] == sym) ||
         (all_equal(board[3][3], board[1][1], board[2][2]) && board[1][1] == sym) ||
-		(all_equal(board[3][1], board[2][2], board[1][3]) && board[2][2] == sym) ||
-		(all_equal(board[0][1], board[1][2], board[2][3]) && board[1][2] == sym) ||
-		(all_equal(board[1][0], board[2][1], board[3][2]) && board[2][1] == sym) ||
-		(all_equal(board[0][3], board[1][2], board[2][1]) && board[1][2] == sym) ||
+        (all_equal(board[3][1], board[2][2], board[1][3]) && board[2][2] == sym) ||
+        (all_equal(board[0][1], board[1][2], board[2][3]) && board[1][2] == sym) ||
+        (all_equal(board[1][0], board[2][1], board[3][2]) && board[2][1] == sym) ||
+        (all_equal(board[0][3], board[1][2], board[2][1]) && board[1][2] == sym) ||
         (all_equal(board[3][0], board[2][1], board[1][2]) && board[3][0] == sym)
         )
-        
+
         return true;
 
     return false;
@@ -230,24 +230,24 @@ Player<char>* XO_UI4::create_player(string& name, char symbol, PlayerType type) 
 
 Move<char>* XO_UI4::get_move(Player<char>* player) {
     int x, y;
-	char direction;
+    char direction;
 
     if (player->get_type() == PlayerType::HUMAN) {
-		cout << "It's your turn " << player->get_name();
+        cout << "It's your turn " << player->get_name();
         cout << "\nEnter your cell for 4x4 and where to move (row col 0 to 3) , (L,R,U,D) : ";
         cin >> x >> y >> direction;
-        
+
     }
     else {
         // computer random move
         x = rand() % player->get_board_ptr()->get_rows();
         y = rand() % player->get_board_ptr()->get_columns();\
 
-                    char dirs[4] = {'L','R','U','D'};
+            char dirs[4] = { 'L','R','U','D' };
         direction = dirs[rand() % 4];
     }
 
-	return new DirectedMove(x, y, player->get_symbol(), direction);
+    return new DirectedMove(x, y, player->get_symbol(), direction);
 }
 
 bool X_O_Board4::is_draw(Player<char>* player) {
@@ -255,7 +255,7 @@ bool X_O_Board4::is_draw(Player<char>* player) {
 }
 
 bool X_O_Board4::game_is_over(Player<char>* player) {
-	return is_win(player) || is_draw(player);
+    return is_win(player) || is_draw(player);
 }
 
 //--------------------------------------- Num_X_O_Board Implementation
@@ -272,7 +272,7 @@ bool X_O_Num_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
     char mark = move->get_symbol();
-    
+
     // 1. Validate move logic
     if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
         (board[x][y] == blank_symbol || mark == 0)) {
@@ -282,21 +282,21 @@ bool X_O_Num_Board::update_board(Move<char>* move) {
             board[x][y] = blank_symbol;
         }
         else {
-            if(n_moves % 2 == 0) // X player
+            if (n_moves % 2 == 0) // X player
             {
                 // Check if the number is odd
-                if((mark - '0') % 2 == 0 || used_numbers[mark - '0'])
+                if ((mark - '0') % 2 == 0 || used_numbers[mark - '0'])
                     return false; // Invalid move
             }
             else // O player
             {
                 // Check if the number is even
-                if((mark - '0') % 2 != 0 || used_numbers[mark - '0'])
+                if ((mark - '0') % 2 != 0 || used_numbers[mark - '0'])
                     return false; // Invalid move
-			}
+            }
             used_numbers[mark - '0'] = true;
-			// 2. Apply the new move
-			board[x][y] = (mark);
+            // 2. Apply the new move
+            board[x][y] = (mark);
             n_moves++;
         }
         return true;
@@ -304,10 +304,10 @@ bool X_O_Num_Board::update_board(Move<char>* move) {
     return false;
 }
 
-    bool X_O_Num_Board::is_win(Player<char>* player) {
+bool X_O_Num_Board::is_win(Player<char>* player) {
     auto notzero = [&](char a, char b, char c) {
         return a != blank_symbol && b != blank_symbol && c != blank_symbol;
-    };
+        };
     // Check rows and columns
     for (int i = 0; i < rows; ++i) {
         if (notzero(board[i][0], board[i][1], board[i][2]) &&
@@ -599,8 +599,8 @@ Pyramid_X_O_Board::Pyramid_X_O_Board() : Board(3, 5) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
- board[0][0] = '*'; board[0][1] = '*'; board[0][3] = '*'; board[0][4] = '*';
- board[1][0] = '*'; board[1][4] = '*';
+    board[0][0] = '*'; board[0][1] = '*'; board[0][3] = '*'; board[0][4] = '*';
+    board[1][0] = '*'; board[1][4] = '*';
 }
 
 bool Pyramid_X_O_Board::update_board(Move<char>* move) {
@@ -635,11 +635,11 @@ bool Pyramid_X_O_Board::is_win(Player<char>* player) {
     if (all_equal(board[1][3], board[0][2], board[2][4]) && board[1][3] == sym)
         return true;
     if (all_equal(board[0][2], board[1][2], board[2][2]) && board[2][2] == sym)
-		return true;
-    for(int i = 0; i < 3; ++i) {
+        return true;
+    for (int i = 0; i < 3; ++i) {
         if ((all_equal(board[2][i], board[2][i + 1], board[2][i + 2]) && board[2][i] == sym))
             return true;
-	}
+    }
     return false;
 }
 bool Pyramid_X_O_Board::is_lose(Player<char>* player) {
@@ -649,7 +649,7 @@ bool Pyramid_X_O_Board::is_draw(Player<char>* player) {
     return (n_moves == 9 && !is_win(player));
 }
 bool Pyramid_X_O_Board::game_is_over(Player<char>* player) {
-	return is_win(player) || is_draw(player);
+    return is_win(player) || is_draw(player);
 }
 
 Player<char>* Pyramid_XO_UI::create_player(string& name, char symbol, PlayerType type) {
@@ -756,17 +756,17 @@ bool X_O_Board_WORD::is_win(Player<char>* player) {
     }
 
     // Check diagonals
-    string e ;
-    string t ;
+    string e;
+    string t;
     e.push_back(board[0][0]);
     e.push_back(board[1][1]);
     e.push_back(board[2][2]);
     t.push_back(board[0][2]);
     t.push_back(board[1][1]);
     t.push_back(board[2][0]);
-    if (s.find(e) != s.end() || s.find(t) != s.end()){
+    if (s.find(e) != s.end() || s.find(t) != s.end()) {
         return true;
-    } 
+    }
     reverse(e.begin(), e.end());
     reverse(t.begin(), t.end());
 
@@ -975,7 +975,7 @@ Diamond_X_O_Board::Diamond_X_O_Board() :Board<char>(7, 7) {
             if (valid)
                 board[i][j] = '.';
             else
-                board[i][j] = '$';   
+                board[i][j] = '$';
         }
     }
 
@@ -1005,10 +1005,10 @@ Diamond_X_O_Board::collect_lines(Player<char>* player, int len) const {
     char sym = player->get_symbol();
 
     const int dirs[4][2] = {
-        {0, 1},   
-        {1, 0},   
-        {1, 1},   
-        {1, -1}   
+        {0, 1},
+        {1, 0},
+        {1, 1},
+        {1, -1}
     };
 
     for (int i = 0; i < 7; ++i) {
@@ -1026,7 +1026,7 @@ Diamond_X_O_Board::collect_lines(Player<char>* player, int len) const {
                     int nx = i + dx * k;
                     int ny = j + dy * k;
 
-                  
+
                     if (nx < 0 || nx >= 7 || ny < 0 || ny >= 7) {
                         ok = false; break;
                     }
@@ -1043,9 +1043,9 @@ Diamond_X_O_Board::collect_lines(Player<char>* player, int len) const {
                 }
 
                 if (ok) {
-                    
+
                     std::sort(line.begin(), line.end());
-                    
+
                     lines.push_back(line);
                 }
             }
@@ -1071,10 +1071,10 @@ bool Diamond_X_O_Board::is_win(Player<char>* player) {
         for (const auto& L4 : lines4) {
             auto d4 = get_dir(L4);
 
-         
+
             if (d3 == d4) continue;
 
-         
+
             if (d3.first == -d4.first && d3.second == -d4.second) continue;
 
             int inter = 0;
@@ -1082,7 +1082,7 @@ bool Diamond_X_O_Board::is_win(Player<char>* player) {
                 for (auto& p4 : L4)
                     if (p3 == p4) ++inter;
 
-            
+
             if (inter == 1)
                 return true;
         }
@@ -1112,7 +1112,7 @@ Move<char>* Diamond_X_O_UI::get_move(Player<char>* player) {
         return new Move<char>(x, y, player->get_symbol());
     }
     else {
-       
+
         int rx, ry;
         Board<char>* b = player->get_board_ptr();
         do {
@@ -1147,13 +1147,13 @@ obstacles_X_O_Board::obstacles_X_O_Board() : Board(6, 6) {
     for (auto& row : board)
         for (auto& cell : row)
             cell = blank_symbol;
-    }
+}
 
 bool obstacles_X_O_Board::update_board(Move<char>* move) {
-	int x = move->get_x();
-	int y = move->get_y();
-	char mark = move->get_symbol();
-	// Validate move and apply if valid
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
+    // Validate move and apply if valid
     if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
         (board[x][y] == blank_symbol || mark == 0)) {
         if (mark == 0) { // Undo move
@@ -1169,8 +1169,8 @@ bool obstacles_X_O_Board::update_board(Move<char>* move) {
             }
         }
     }
-        return true;
-    }
+    return true;
+}
 
 bool obstacles_X_O_Board::is_win(Player<char>* player) {
     const char sym = player->get_symbol();
@@ -1191,7 +1191,7 @@ bool obstacles_X_O_Board::is_win(Player<char>* player) {
                 return true;
         }
     }
-	// Check diagonals
+    // Check diagonals
     for (int i = 0; i < rows - 2; ++i) {
         for (int j = 0; j < columns - 2; ++j) {
             if (all_equal(board[i][j], board[i + 1][j + 1], board[i + 2][j + 2]) && board[i][j] == sym)
@@ -1204,7 +1204,7 @@ bool obstacles_X_O_Board::is_win(Player<char>* player) {
                 return true;
         }
     }
-    
+
     return false;
 }
 bool obstacles_X_O_Board::is_draw(Player<char>* player) {
@@ -1264,7 +1264,7 @@ int X_O_Board_5::count_three_in_row(char sym) {
         return a == sym && b == sym && c == sym;
         };
 
-    
+
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c <= cols - 3; c++) {
             if (check_three(board[r][c], board[r][c + 1], board[r][c + 2])) {
@@ -1273,7 +1273,7 @@ int X_O_Board_5::count_three_in_row(char sym) {
         }
     }
 
-    
+
     for (int c = 0; c < cols; c++) {
         for (int r = 0; r <= rows - 3; r++) {
             if (check_three(board[r][c], board[r + 1][c], board[r + 2][c])) {
@@ -1282,7 +1282,7 @@ int X_O_Board_5::count_three_in_row(char sym) {
         }
     }
 
-    
+
     for (int r = 0; r <= rows - 3; r++) {
         for (int c = 0; c <= cols - 3; c++) {
             if (check_three(board[r][c], board[r + 1][c + 1], board[r + 2][c + 2])) {
@@ -1292,7 +1292,7 @@ int X_O_Board_5::count_three_in_row(char sym) {
     }
 
     for (int r = 0; r <= rows - 3; r++) {
-        for (int c = 2; c < cols; c++) {  
+        for (int c = 2; c < cols; c++) {
             if (check_three(board[r][c], board[r + 1][c - 1], board[r + 2][c - 2])) {
                 count++;
             }
@@ -1308,12 +1308,12 @@ bool X_O_Board_5::is_win(Player<char>* player) {
     int xCount = count_three_in_row('X');
     int oCount = count_three_in_row('O');
 
-    cout << xCount << " " << oCount<<'\n';
+    cout << xCount << " " << oCount << '\n';
 
     if (xCount > oCount)   return player->get_symbol() == 'X';
     if (oCount > xCount)   return player->get_symbol() == 'O';
 
-    return false; 
+    return false;
 }
 
 bool X_O_Board_5::is_lose(Player<char>* player) {
@@ -1322,7 +1322,7 @@ bool X_O_Board_5::is_lose(Player<char>* player) {
     int xCount = count_three_in_row('X');
     int oCount = count_three_in_row('O');
 
-    cout << xCount << " " << oCount<<'\n';
+    cout << xCount << " " << oCount << '\n';
 
     if (xCount > oCount)   return player->get_symbol() == 'O';
     if (oCount > xCount)   return player->get_symbol() == 'X';
@@ -1332,11 +1332,11 @@ bool X_O_Board_5::is_lose(Player<char>* player) {
 
 bool X_O_Board_5::is_draw(Player<char>* player) {
     if (n_moves < 24) return false;
-        char me = toupper(player->get_symbol());
-        char opp = (me == 'X') ? 'O' : 'X';
-        cout << count_three_in_row(opp) << " " << count_three_in_row(me) << endl;
-        return count_three_in_row(me) == count_three_in_row(opp);
-    
+    char me = toupper(player->get_symbol());
+    char opp = (me == 'X') ? 'O' : 'X';
+    cout << count_three_in_row(opp) << " " << count_three_in_row(me) << endl;
+    return count_three_in_row(me) == count_three_in_row(opp);
+
 }
 
 bool X_O_Board_5::game_is_over(Player<char>* player) {
@@ -1349,6 +1349,61 @@ Ultimate_X_O_Board::Ultimate_X_O_Board() : Board(9, 9) {
         for (auto& cell : row)
             cell = blank_symbol;
 }
+void Ultimate_X_O_Board::print_meta_board() {
+    cout << "\nMeta Board (3x3):\n";
+    cout << "+---+---+---+\n";
+    for (int i = 0; i < 3; i++) {
+        cout << "| ";
+        for (int j = 0; j < 3; j++) {
+            char cell = main_board[i][j];
+            if (cell == '.') cell = ' ';
+            cout << cell << " | ";
+        }
+        cout << "\n+---+---+---+\n";
+    }
+}
+
+void Ultimate_X_O_Board::update_meta_board() {
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            main_board[i][j] = '.';
+
+    auto check_winner = [&](int bi, int bj) -> char {
+        int r = bi * 3;
+        int c = bj * 3;
+
+        for (char sym : {'X', 'O'}) {
+            auto all_equal = [&](char a, char b, char c) {
+                return a == b && b == c && a == sym;
+                };
+
+            // Rows
+            for (int i = 0; i < 3; i++)
+                if (all_equal(board[r + i][c], board[r + i][c + 1], board[r + i][c + 2]))
+                    return sym;
+
+            // Columns
+            for (int j = 0; j < 3; j++)
+                if (all_equal(board[r][c + j], board[r + 1][c + j], board[r + 2][c + j]))
+                    return sym;
+
+            // Diagonals
+            if (all_equal(board[r][c], board[r + 1][c + 1], board[r + 2][c + 2]))
+                return sym;
+
+            if (all_equal(board[r][c + 2], board[r + 1][c + 1], board[r + 2][c]))
+                return sym;
+        }
+
+        return '.'; 
+        };
+
+    for (int bi = 0; bi < 3; bi++)
+        for (int bj = 0; bj < 3; bj++)
+            main_board[bi][bj] = check_winner(bi, bj);
+}
+
 bool Ultimate_X_O_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -1364,6 +1419,8 @@ bool Ultimate_X_O_Board::update_board(Move<char>* move) {
             n_moves++;
             board[x][y] = toupper(mark);
         }
+        update_meta_board();
+        print_meta_board();
         return true;
     }
     return false;
@@ -1407,10 +1464,11 @@ bool Ultimate_X_O_Board::is_win(Player<char>* player) {
                 won = true;
 
             if (won) {
-                for(int i = 0; i < 3; i++)
-                    for(int j = 0; j < 3; j++)
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 3; j++)
                         if (board[r + i][c + j] == blank_symbol) {
-							board[r + i][c + j] = '#';
+                            board[r + i][c + j] = '#';
+                            ++y;
                         }
                 main_board[bi][bj] = sym;
             }
@@ -1421,26 +1479,38 @@ bool Ultimate_X_O_Board::is_win(Player<char>* player) {
 
     // Rows
     for (int i = 0; i < 3; i++)
-        if (all_equal(main_board[i][0], main_board[i][1], main_board[i][2]))
+        if (all_equal(main_board[i][0], main_board[i][1], main_board[i][2])) {
+            update_meta_board();
+            print_meta_board();
             return true;
+        }
 
     // Columns
     for (int j = 0; j < 3; j++)
-        if (all_equal(main_board[0][j], main_board[1][j], main_board[2][j]))
+        if (all_equal(main_board[0][j], main_board[1][j], main_board[2][j])) {
+            update_meta_board();
+            print_meta_board();
             return true;
+        }
 
     // Diagonals
-    if (all_equal(main_board[0][0], main_board[1][1], main_board[2][2]))
+    if (all_equal(main_board[0][0], main_board[1][1], main_board[2][2])) {
+        update_meta_board();
+        print_meta_board();
         return true;
+    }
 
-    if (all_equal(main_board[0][2], main_board[1][1], main_board[2][0]))
+    if (all_equal(main_board[0][2], main_board[1][1], main_board[2][0])) {
+        update_meta_board();
+        print_meta_board();
         return true;
+    }
 
     return false;
 }
 
 bool Ultimate_X_O_Board::is_draw(Player<char>* player) {
-    return (n_moves == 81 && !is_win(player));
+    return ((n_moves + y) == 81 && !is_win(player));
 }
 bool Ultimate_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);

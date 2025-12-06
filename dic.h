@@ -1,3 +1,22 @@
+/**
+ * @file dic.h
+ * @brief Dictionary of valid 3-letter English words for the Word Tic-Tac-Toe game.
+ *
+ * @details
+ * This header defines a static `unordered_set<string>` named `s` that contains
+ * all valid 3-letter words used in the "Word Tic-Tac-Toe" (X_O_Board_WORD).
+ *
+ * During gameplay, any row/column/diagonal that forms a 3-letter sequence is checked
+ * against this dictionary. If the sequence exists in the set (in normal or reversed order),
+ * it is considered a winning word.
+ *
+ * The dictionary is stored as:
+ *  - **unordered_set** → for fast O(1) lookups
+ *  - **static global** → so it is shared across all translation units that include this file
+ *
+ * This file contains **over 1000 valid English 3-letter words**, taken from a standard
+ * word list. The dictionary supports both normal and reverse spellings (e.g. "CAT", "TAC").
+ */
 #ifndef DIC_H
 #define DIC_H
 
@@ -5,6 +24,18 @@
 #include <string>
 
 using namespace std;
+/**
+ * @var s
+ * @brief Global static dictionary of valid 3-letter words.
+ *
+ * @details
+ * This unordered_set holds all accepted words for Word Tic-Tac-Toe.
+ * The game logic performs:
+ *  - direct lookup:   `s.find(word) != s.end()`
+ *  - reverse lookup:  `reverse(word)` then search again
+ *
+ * Using a hash set ensures extremely fast membership tests.
+ */
 
     static unordered_set<string> s = {
         "AAH", "AAL", "AAS", "ABA", "ABO", "ABS", "ABY", "ACE", "ACT", "ADD",
@@ -106,5 +137,6 @@ using namespace std;
         "ZAG", "ZAP", "ZAX", "ZED", "ZEE", "ZEK", "ZIG", "ZIN", "ZIP", "ZIT",
         "ZOA", "ZOO"
     };
+
 
 #endif

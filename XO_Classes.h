@@ -345,6 +345,27 @@ class obstacles_XO_UI : public UI<char> {
     virtual Move<char>* get_move(Player<char>* player);
 };
 
+class X_O_Board_5 : public Board<char> {
+public:
+    X_O_Board_5();
+    bool update_board(Move<char>* move);
+    bool is_win(Player<char>* player) ;
+    bool is_draw(Player<char>* player);
+    bool is_lose(Player<char>* player);
+    bool game_is_over(Player<char>* player) ;
+private:
+    int count_three_in_row(char sym) ;
+    char blank_symbol = '.';
+};
+
+
+class XO_UI_5 : public UI<char> {
+public:
+    XO_UI_5();
+    ~XO_UI_5() {};
+    Player<char>* create_player(string& name, char symbol, PlayerType type);
+    virtual Move<char>* get_move(Player<char>* player);
+};
 #endif // XO_CLASSES_H
 
 

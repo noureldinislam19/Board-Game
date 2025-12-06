@@ -26,6 +26,8 @@ Memo_XO_UI::Memo_XO_UI() : UI<char>("Welcome to FCAI X-O Game by Dr El-Ramly", 3
 
 obstacles_XO_UI::obstacles_XO_UI() : UI<char>("Welcome to Obstacle Tic Tac Toe!", 3) {}
 
+Ultimate_X_O_UI::Ultimate_X_O_UI() : UI<char>("Welcome to Ultimate Tic Tac Toe!", 3) {}
+
 //--------------------------------------- Infinty_X_O_Board Implementation
 X_O_Board::X_O_Board() : Board(3, 3) {
     for (auto& row : board)
@@ -1306,7 +1308,7 @@ bool X_O_Board_5::is_win(Player<char>* player) {
     int xCount = count_three_in_row('X');
     int oCount = count_three_in_row('O');
 
-    cout << xCount << " " << oCount;
+    cout << xCount << " " << oCount<<'\n';
 
     if (xCount > oCount)   return player->get_symbol() == 'X';
     if (oCount > xCount)   return player->get_symbol() == 'O';
@@ -1320,7 +1322,7 @@ bool X_O_Board_5::is_lose(Player<char>* player) {
     int xCount = count_three_in_row('X');
     int oCount = count_three_in_row('O');
 
-    cout << xCount << " " << oCount;
+    cout << xCount << " " << oCount<<'\n';
 
     if (xCount > oCount)   return player->get_symbol() == 'O';
     if (oCount > xCount)   return player->get_symbol() == 'X';
@@ -1341,4 +1343,127 @@ bool X_O_Board_5::game_is_over(Player<char>* player) {
     return n_moves >= 24;
 }
 
+//--------------------------------------------------- Ultimate_X_O_Board Implementation
+Ultimate_X_O_Board::Ultimate_X_O_Board() : Board(9, 9) {
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
+}
+bool Ultimate_X_O_Board::update_board(Move<char>* move) {
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
+    // Validate move and apply if valid
+    if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
+        (board[x][y] == blank_symbol || mark == 0)) {
+        if (mark == 0) { // Undo move
+            n_moves--;
+            board[x][y] = blank_symbol;
+        }
+        else {         // Apply move
+            n_moves++;
+            board[x][y] = toupper(mark);
+        }
+        return true;
+    }
+    return false;
+}
+bool Ultimate_X_O_Board::is_win(Player<char>* player) {
+    char sym = player->get_symbol();
 
+    // Lambda for checking three equal non-blank cells
+    auto all_equal = [&](char a, char b, char c) {
+        return a == b && b == c && a == sym;
+        };
+
+    // Reset main_board (3x3 meta-board)
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            main_board[i][j] = '.'; // or blank_symbol
+
+    // ---- PHASE 1: Determine winners of all 3x3 sub-boards ----
+    for (int bi = 0; bi < 3; bi++) {
+        for (int bj = 0; bj < 3; bj++) {
+
+            int r = bi * 3;
+            int c = bj * 3;
+
+            bool won = false;
+
+            // Check rows
+            for (int i = 0; i < 3; i++)
+                if (all_equal(board[r + i][c], board[r + i][c + 1], board[r + i][c + 2]))
+                    won = true;
+
+            // Check columns
+            for (int j = 0; j < 3; j++)
+                if (all_equal(board[r][c + j], board[r + 1][c + j], board[r + 2][c + j]))
+                    won = true;
+
+            // Check diagonals
+            if (all_equal(board[r][c], board[r + 1][c + 1], board[r + 2][c + 2]))
+                won = true;
+            if (all_equal(board[r][c + 2], board[r + 1][c + 1], board[r + 2][c]))
+                won = true;
+
+            if (won) {
+                for(int i = 0; i < 3; i++)
+                    for(int j = 0; j < 3; j++)
+                        if (board[r + i][c + j] == blank_symbol) {
+							board[r + i][c + j] = '#';
+                        }
+                main_board[bi][bj] = sym;
+            }
+        }
+    }
+
+    // ---- PHASE 2: Check win in the meta-board (3x3) ----
+
+    // Rows
+    for (int i = 0; i < 3; i++)
+        if (all_equal(main_board[i][0], main_board[i][1], main_board[i][2]))
+            return true;
+
+    // Columns
+    for (int j = 0; j < 3; j++)
+        if (all_equal(main_board[0][j], main_board[1][j], main_board[2][j]))
+            return true;
+
+    // Diagonals
+    if (all_equal(main_board[0][0], main_board[1][1], main_board[2][2]))
+        return true;
+
+    if (all_equal(main_board[0][2], main_board[1][1], main_board[2][0]))
+        return true;
+
+    return false;
+}
+
+bool Ultimate_X_O_Board::is_draw(Player<char>* player) {
+    return (n_moves == 81 && !is_win(player));
+}
+bool Ultimate_X_O_Board::game_is_over(Player<char>* player) {
+    return is_win(player) || is_draw(player);
+}
+
+Player<char>* Ultimate_X_O_UI::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating Ultimate X-O Player: " << name
+        << " (" << symbol << ") - "
+        << (type == PlayerType::HUMAN ? "Human" : "Computer")
+        << endl;
+    return new Player<char>(name, symbol, type);
+}
+
+Move<char>* Ultimate_X_O_UI::get_move(Player<char>* player) {
+    int x, y;
+    if (player->get_type() == PlayerType::HUMAN) {
+        cout << "\nEnter your move for Ultimate X-O (row col): ";
+        cin >> x >> y;
+    }
+    else {
+        // computer random move
+        x = rand() % player->get_board_ptr()->get_rows();
+        y = rand() % player->get_board_ptr()->get_columns();
+    }
+    return new Move<char>(x, y, player->get_symbol());
+}

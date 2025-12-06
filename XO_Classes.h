@@ -366,6 +366,27 @@ public:
     Player<char>* create_player(string& name, char symbol, PlayerType type);
     virtual Move<char>* get_move(Player<char>* player);
 };
+
+//--------------------------------------------------- Ultimate Tic-Tac-Toe Implementation
+
+class Ultimate_X_O_Board : public Board<char> {
+    private:
+    char blank_symbol = '.';
+    char main_board[3][3];
+    public:
+    Ultimate_X_O_Board();
+    bool update_board(Move<char>* move) override;
+    bool is_win(Player<char>* player) override;
+    bool is_draw(Player<char>* player) override;
+    bool game_is_over(Player<char>* player) override;
+	bool is_lose(Player<char>*) override { return false; }  
+};
+
+class Ultimate_X_O_UI : public UI<char> {
+    public:
+    Ultimate_X_O_UI();
+    Player<char>* create_player(string& name, char symbol, PlayerType type) override;
+    virtual Move<char>* get_move(Player<char>* player) override;
+    void display_main_board(char main_board[3][3]);
+};
 #endif // XO_CLASSES_H
-
-

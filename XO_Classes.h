@@ -621,7 +621,7 @@ public:
 class obstacles_X_O_Board : public Board<char> {
 private:
     char blank_symbol = '.';
-    char obstacle_symbol = '*';
+    char obstacle_symbol = '#';
 public:
     obstacles_X_O_Board();
     bool update_board(Move<char>* move);
@@ -731,3 +731,4 @@ public:
 };
 
 #endif // XO_CLASSES_H
+

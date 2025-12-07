@@ -975,7 +975,8 @@ bool Pyramid_X_O_Board::update_board(Move<char>* move) {
     char mark = move->get_symbol();
     // Validate move and apply if valid
     if (!(x < 0 || x >= rows || y < 0 || y >= columns) &&
-        (board[x][y] == blank_symbol || mark == 0)) {
+        (board[x][y] == blank_symbol || mark == 0
+            )) {
         if (mark == 0) { // Undo move
             n_moves--;
             board[x][y] = blank_symbol;
@@ -1776,18 +1777,7 @@ Player<char>* obstacles_XO_UI::create_player(string& name, char symbol, PlayerTy
  * @param player Pointer to player.
  * @return Pointer to new move.
  */
-Move<char>* obstacles_XO_UI::get_move(Player<char>* player) {
-    int x, y;
-    if (player->get_type() == PlayerType::HUMAN) {
-        cout << "Enter move (row col 0 to 5): ";
-        cin >> x >> y;
-    }
-    else {
-        x = rand() % 6;
-        y = rand() % 6;
-    }
-    return new Move<char>(x, y, player->get_symbol());
-}
+
 
 /**
  * @brief Constructs a 6x6 Obstacle X-O board with all cells blank.
@@ -1822,18 +1812,15 @@ bool obstacles_X_O_Board::update_board(Move<char>* move) {
             n_moves++;
             board[x][y] = toupper(mark);
             if (n_moves % 2 == 0) {
-                int u = rand() % 6;
-                int i = rand() % 6;
-                int v = rand() % 6;
-                int b = rand() % 6;
-                while (((board[u][i] != blank_symbol || board[u][i] == '#') && (board[b][v] != blank_symbol || board[b][v] == '#')) || (u == b && i == v)) {
-                    u = rand() % 6;
-                    i = rand() % 6;
-                    v = rand() % 6;
-                    b = rand() % 6;
+                int obstacles_placed = 0;
+                while (obstacles_placed < 2) {
+                    int rx = rand() % rows;
+                    int ry = rand() % columns;
+                    if (board[rx][ry] == blank_symbol) {
+                        board[rx][ry] = obstacle_symbol;
+                        obstacles_placed++;
+                    }
                 }
-                board[u][i] = '#';
-                board[b][v] = '#';
             }
         }
     }
@@ -1903,7 +1890,7 @@ bool obstacles_X_O_Board::is_win(Player<char>* player) {
  * @return @c true if draw, otherwise @c false.
  */
 bool obstacles_X_O_Board::is_draw(Player<char>* player) {
-    return (n_moves == 36 && !is_win(player));
+    return (n_moves + 18 == 36 && !is_win(player));
 }
 
 /**
@@ -1914,6 +1901,48 @@ bool obstacles_X_O_Board::is_draw(Player<char>* player) {
  */
 bool obstacles_X_O_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
+}
+
+Move<char>* obstacles_XO_UI::get_move(Player<char>* player) {
+    int x, y;
+    Board<char>* b = player->get_board_ptr();
+
+    if (player->get_type() == PlayerType::HUMAN) {
+
+        while (true) {
+            cout << "Enter move (row col 0 to 5): ";
+            cin >> x >> y;
+
+            // bounds
+            if (x < 0 || x >= 6 || y < 0 || y >= 6) {
+                cout << "Invalid position! Try again.\n";
+                continue;
+            }
+
+            // obstacle
+            if (b->get_cell(x, y) == '#') {
+                cout << "That cell is an obstacle (#). Choose another.\n";
+                continue;
+            }
+
+            // not empty
+            if (b->get_cell(x, y) != '.') {
+                cout << "Cell already used. Try another.\n";
+                continue;
+            }
+
+            break;
+        }
+    }
+    else {
+        // computer random valid move
+        do {
+            x = rand() % 6;
+            y = rand() % 6;
+        } while (b->get_cell(x, y) != '.');
+    }
+
+    return new Move<char>(x, y, player->get_symbol());
 }
 
 // ------------------------------ 5x5 X-O board 

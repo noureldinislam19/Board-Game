@@ -160,6 +160,3 @@ Each game has slightly different rules and move formats:
 4. **Enhanced Multiplayer:** Add networked multiplayer support.  
 5. **Better User Feedback:** Add sound, colors, and improved input validation.  
 6. **Statistics & Scoring:** Track wins, losses, and scores over multiple sessions.  
-
-## Repository Structure
-
